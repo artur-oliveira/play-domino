@@ -1,4 +1,4 @@
-package org.playdomino.models.generic;
+package org.playdomino.models.auth.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -7,16 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-public class GenericError {
-    private String code;
-    private String error;
-    private List<?> data;
-    private String message;
+public final class JwtResponse {
+    private String accessToken;
+    private String refreshToken;
 }

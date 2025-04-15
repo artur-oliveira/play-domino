@@ -19,7 +19,7 @@ public class UserDoesNotExistsByUsernameCreateUserValidation implements CreateUs
     @Transactional(readOnly = true)
     public void validate(User user) {
         if (userRepository.findUserByEmail(user.getUsername()).isPresent()) {
-            throw new UserAlreadyExistsException(messagesComponent.getMessage(AuthExceptionConstants.USER_EXISTS), user.getUsername());
+            throw new UserAlreadyExistsException(messagesComponent.getMessage(AuthExceptionConstants.USER_ALREADY_EXISTS), user.getUsername());
         }
     }
 }

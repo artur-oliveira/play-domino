@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,11 +29,6 @@ public class WebSecurityConfig {
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final UserDetailsService userDetailsService;
     private final AuthTokenFilter authTokenFilter;
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -71,7 +65,6 @@ public class WebSecurityConfig {
                         // HealthController
                         .requestMatchers("/v1/health-check").permitAll()
                         // AuthController
-                        .requestMatchers("/v1/auth/me").authenticated()
                         .requestMatchers("/v1/auth/**").permitAll()
                         // Any Other Request
                         .anyRequest().authenticated());

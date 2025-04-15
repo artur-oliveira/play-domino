@@ -8,7 +8,7 @@ public final class UserAlreadyExistsException extends DominoException {
     private final String existingData;
 
     public UserAlreadyExistsException(String message, String existingData) {
-        super(AuthExceptionConstants.USER_EXISTS, message);
+        super(AuthExceptionConstants.USER_ALREADY_EXISTS, message);
         this.existingData = existingData;
     }
 }

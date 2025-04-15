@@ -42,33 +42,20 @@ public final class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(
-            String id,
-            String subject,
-            Date iat,
-            Date exp,
-            TokenType typ
+            User user,
+            TokenType tokenType,
+            Function<ZonedDateTime, Date> expirationFunction
     ) {
+        ZonedDateTime now = ZonedDateTime.now();
         return Jwts
                 .builder()
-                .issuer("server@playdomino.org")
-                .id(id)
-                .subject(subject)
-                .issuedAt(iat)
-                .expiration(exp)
-                .claim("type", typ.name().toLowerCase())
-                .signWith(typ.secretKeyFor(this))
+                .issuer("api@playdomino.org")
+                .id(user.getUsername())
+                .subject(user.getDisplayName())
+                .issuedAt(Date.from(now.toInstant()))
+                .expiration(expirationFunction.apply(now))
+                .signWith(tokenType.secretKeyFor(this))
                 .compact();
-    }
-
-    private String generateToken(User user, TokenType tokenType, Function<ZonedDateTime, Date> expirationFunction) {
-        ZonedDateTime now = ZonedDateTime.now();
-        return generateToken(
-                user.getEmail(),
-                user.getDisplayName(),
-                Date.from(now.toInstant()),
-                expirationFunction.apply(now),
-                tokenType
-        );
     }
 
     @Override
@@ -81,20 +68,6 @@ public final class JwtServiceImpl implements JwtService {
         return generateToken((User) authentication.getPrincipal(), TokenType.REFRESH, (now) -> Date.from(now.plusDays(365).with(LocalTime.MAX).toInstant()));
     }
 
-
-    @Override
-    public String generateAccessToken(String refreshToken) {
-        Jws<Claims> claimsJws = claims(refreshToken, TokenType.REFRESH.secretKeyFor(this));
-        ZonedDateTime now = ZonedDateTime.now();
-        return generateToken(
-                claimsJws.getPayload().getId(),
-                claimsJws.getPayload().getSubject(),
-                Date.from(now.toInstant()),
-                Date.from(now.with(LocalTime.MAX).toInstant()),
-                TokenType.ACCESS
-        );
-    }
-
     public Jws<Claims> claims(String authToken, SecretKey secretKey) {
         return Jwts
                 .parser()
@@ -103,8 +76,14 @@ public final class JwtServiceImpl implements JwtService {
                 .parseSignedClaims(authToken);
     }
 
-    public Jws<Claims> claims(String authToken) {
-        return claims(authToken, getSecretKeyAccess());
+    @Override
+    public Jws<Claims> claims(String token) {
+        return claims(token, getSecretKeyAccess());
+    }
+
+    @Override
+    public Jws<Claims> claimsRefresh(String token) {
+        return claims(token, getSecretKeyRefresh());
     }
 
     public boolean validateClaims(ThrowableFunction<String, Boolean> supplier, String token) {
@@ -138,11 +117,6 @@ public final class JwtServiceImpl implements JwtService {
             claims(token, getSecretKeyRefresh());
             return true;
         }, authToken);
-    }
-
-    @Override
-    public String subject(String jwt) {
-        return claims(jwt).getPayload().getSubject();
     }
 
     private enum TokenType {

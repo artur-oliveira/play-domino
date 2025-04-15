@@ -19,7 +19,7 @@ public class UserDoesNotExistsByFederalDocumentAndCountryCreateUserValidation im
     @Transactional(readOnly = true)
     public void validate(User user) {
         if (userRepository.findUserByFederalDocumentAndCountry(user.getFederalDocument(), user.getCountry()).isPresent()) {
-            throw new UserAlreadyExistsException(messagesComponent.getMessage(AuthExceptionConstants.USER_EXISTS), user.getFederalDocument());
+            throw new UserAlreadyExistsException(messagesComponent.getMessage(AuthExceptionConstants.USER_ALREADY_EXISTS), user.getFederalDocument());
         }
     }
 }

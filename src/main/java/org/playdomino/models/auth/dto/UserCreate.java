@@ -12,15 +12,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.playdomino.models.auth.Country;
+import org.playdomino.models.auth.Role;
 import org.playdomino.models.auth.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserCreate {
+public final class UserCreate {
     @NotNull
     private Country country;
     @NotEmpty
@@ -28,6 +31,10 @@ public class UserCreate {
     @Email
     private String email;
     @NotNull
+    @Pattern(
+            regexp = "^(?!.*[._]{2})(?!.*[._]$)[a-zA-Z][a-zA-Z0-9._]{2,31}$",
+            message = "{validation.user.username.pattern}"
+    )
     private String username;
     @NotNull
     private String firstname;
@@ -50,10 +57,11 @@ public class UserCreate {
                 .password(encoder.encode(getPassword()))
                 .country(getCountry())
                 .federalDocument(getFederalDocument())
+                .roles(new HashSet<>(Set.of(Role.ROLE_USER)))
                 .firstname(getFirstname())
                 .lastname(getLastname())
                 .username(getUsername())
-                .accountNonExpired(true)
+                .accountNonLocked(true)
                 .accountNonExpired(true)
                 .credentialsNonExpired(true)
                 .enabled(false)

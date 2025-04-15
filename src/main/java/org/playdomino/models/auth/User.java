@@ -1,5 +1,6 @@
 package org.playdomino.models.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -49,6 +50,7 @@ public class User implements UserDetails {
     private String email;
 
     @NotEmpty
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -57,6 +59,7 @@ public class User implements UserDetails {
     private String federalDocument;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Country country;
 
