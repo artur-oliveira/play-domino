@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @NoArgsConstructor
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserCreate {
+public class UserLogin {
     @NotNull
     private Country country;
     @NotEmpty

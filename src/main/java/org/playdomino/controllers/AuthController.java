@@ -1,28 +1,28 @@
 package org.playdomino.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.playdomino.models.auth.User;
+import org.playdomino.models.auth.dto.UserCreate;
+import org.playdomino.services.auth.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/auth")
-@RequiredArgsConstructorl
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
 
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
-        // Criptografar senha
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        userRepository.save(user);
-        return "Usuário registrado com sucesso!";
+    public User register(@RequestBody UserCreate user) {
+        return userService.create(user);
     }
 
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        // Aqui você vai depender do Spring Security para fazer a autenticação
-        return "Login feito com sucesso!";
+    @PostMapping("/token")
+    public User login(@RequestBody UserCreate user) {
+        return userService.create(user);
     }
+
 }
 
