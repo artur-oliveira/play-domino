@@ -66,6 +66,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/v1/health-check").permitAll()
                         // AuthController
                         .requestMatchers("/v1/auth/**").permitAll()
+                        .requestMatchers("/v1/wallet/**").hasRole("USER")
                         // Any Other Request
                         .anyRequest().authenticated());
 

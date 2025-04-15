@@ -7,7 +7,7 @@ import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserCreate;
 import org.playdomino.models.auth.dto.UserToken;
 import org.playdomino.services.auth.UserService;
-import org.playdomino.services.auth.UserVerificationService;
+import org.playdomino.services.auth.verification.UserVerificationService;
 import org.playdomino.services.auth.token.UserTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

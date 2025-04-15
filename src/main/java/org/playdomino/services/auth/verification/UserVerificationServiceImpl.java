@@ -1,4 +1,4 @@
-package org.playdomino.services.auth;
+package org.playdomino.services.auth.verification;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class UserVerificationServiceImpl implements UserVerificationService {
     private final UserVerificationRepository userVerificationRepository;
     private final UserRepository userRepository;
+    private final List<AfterVerificationService> afterVerificationServiceList;
     private final MessagesComponent messagesComponent;
 
     UserVerificationException newException(String code) {
@@ -40,5 +42,6 @@ public class UserVerificationServiceImpl implements UserVerificationService {
         userRepository.save(user);
         verification.setVerifiedAt(ZonedDateTime.now());
         userVerificationRepository.save(verification);
+        afterVerificationServiceList.forEach(it -> it.afterVerification(user));
     }
 }
