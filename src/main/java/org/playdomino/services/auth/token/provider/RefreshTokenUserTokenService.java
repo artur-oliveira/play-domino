@@ -3,8 +3,7 @@ package org.playdomino.services.auth.token.provider;
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.auth.AuthExceptionConstants;
-import org.playdomino.exceptions.auth.InvalidRefreshTokenException;
-import org.playdomino.exceptions.auth.UserDoesNotExistsException;
+import org.playdomino.exceptions.auth.UserException;
 import org.playdomino.models.auth.AuthProvider;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.JwtResponse;
@@ -31,9 +30,9 @@ public class RefreshTokenUserTokenService implements UserTokenServiceProvider {
     @Transactional(readOnly = true)
     public JwtResponse getToken(UserToken login) {
         if (!jwtService.isValidRefresh(login.getRefreshToken())) {
-            throw new InvalidRefreshTokenException(messagesComponent.getMessage(AuthExceptionConstants.USER_INVALID_REFRESH_TOKEN));
+            throw new UserException(AuthExceptionConstants.USER_INVALID_REFRESH_TOKEN, messagesComponent.getMessage(AuthExceptionConstants.USER_INVALID_REFRESH_TOKEN));
         }
-        User user = userRepository.findUserByUsername(jwtService.idRefresh(login.getRefreshToken())).orElseThrow(() -> new UserDoesNotExistsException(messagesComponent.getMessage(AuthExceptionConstants.USER_DOES_NOT_EXISTS)));
+        User user = userRepository.findUserByUsername(jwtService.idRefresh(login.getRefreshToken())).orElseThrow(() -> new UserException(AuthExceptionConstants.USER_DOES_NOT_EXISTS, messagesComponent.getMessage(AuthExceptionConstants.USER_DOES_NOT_EXISTS)));
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 user.getUsername(), user.getPassword()
         ));

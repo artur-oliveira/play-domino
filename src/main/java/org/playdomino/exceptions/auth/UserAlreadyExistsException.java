@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.playdomino.exceptions.DominoException;
 
 @Getter
-public final class UserAlreadyExistsException extends DominoException {
+public final class UserAlreadyExistsException extends UserException {
     private final String existingData;
 
     public UserAlreadyExistsException(String message, String existingData) {

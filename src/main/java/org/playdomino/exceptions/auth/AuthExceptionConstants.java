@@ -9,4 +9,7 @@ public final class AuthExceptionConstants {
     public static final String USER_DOES_NOT_EXISTS = "user.does-not-exists";
     public static final String USER_INVALID_REFRESH_TOKEN = "user.invalid-refresh-token";
     public static final String USER_INVALID_AUTHENTICATION = "user.invalid-authentication";
+    public static final String USER_VERIFICATION_NOT_FOUND = "user-verification.not-found";
+    public static final String USER_VERIFICATION_ALREADY_VERIFIED = "user-verification.already-verified";
+    public static final String USER_VERIFICATION_EXPIRED = "user-verification.expired";
 }

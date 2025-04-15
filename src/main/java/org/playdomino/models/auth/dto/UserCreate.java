@@ -49,7 +49,8 @@ public final class UserCreate {
 
     @JsonIgnore
     public User asUser(
-            PasswordEncoder encoder
+            PasswordEncoder encoder,
+            boolean markAsEnabled
     ) {
         return User
                 .builder()
@@ -64,7 +65,7 @@ public final class UserCreate {
                 .accountNonLocked(true)
                 .accountNonExpired(true)
                 .credentialsNonExpired(true)
-                .enabled(false)
+                .enabled(markAsEnabled)
                 .build();
     }
 }

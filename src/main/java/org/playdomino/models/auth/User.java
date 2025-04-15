@@ -7,14 +7,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -64,32 +64,43 @@ public class User implements UserDetails {
     private Country country;
 
     @Builder.Default
-    @Column(name = "account_non_expired")
+    @Column(name = "account_non_expired", nullable = false)
     private boolean accountNonExpired = false;
 
     @Builder.Default
-    @Column(name = "account_non_Locked")
+    @Column(name = "account_non_locked", nullable = false)
     private boolean accountNonLocked = false;
 
     @Builder.Default
-    @Column(name = "credentials_non_expired")
+    @Column(name = "credentials_non_expired", nullable = false)
     private boolean credentialsNonExpired = false;
 
     @Builder.Default
-    @Column(name = "enabled")
+    @Column(name = "enabled", nullable = false)
     private boolean enabled = false;
 
     @ElementCollection(targetClass = Role.class)
     @CollectionTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_roles_user"))
+            joinColumns = @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_user_roles_user"))
     )
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Set<Role> roles;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
+    private ZonedDateTime createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
+    @Column(name = "last_modified_at", nullable = false)
+    private ZonedDateTime lastModifiedAt;
+
     @Override
     @Transient
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Optional.ofNullable(getRoles()).orElseGet(HashSet::new).stream().map(it -> new SimpleGrantedAuthority(it.name())).toList();
     }
@@ -98,6 +109,15 @@ public class User implements UserDetails {
     @JsonProperty("display_name")
     public String getDisplayName() {
         return String.join(" ", getFirstname(), getLastname());
+    }
+
+    @JsonIgnore
+    public UserVerification createUserVerification() {
+        return UserVerification
+                .builder()
+                .user(this)
+                .token(UUID.randomUUID().toString())
+                .build();
     }
 }
 
