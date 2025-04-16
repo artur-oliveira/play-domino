@@ -1,7 +1,7 @@
 package org.playdomino.services.game.validation.addplayer;
 
-import org.playdomino.models.game.dto.AddPlayerToGame;
+import org.playdomino.models.game.dto.AddPlayerDominoGame;
 
 public interface BeforeAddPlayerService {
-    void process(AddPlayerToGame addPlayerToGame);
+    void process(AddPlayerDominoGame addPlayerDominoGame);
 }

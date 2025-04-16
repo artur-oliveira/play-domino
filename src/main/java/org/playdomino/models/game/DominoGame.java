@@ -1,5 +1,6 @@
 package org.playdomino.models.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -44,10 +45,13 @@ public class DominoGame {
 
     @Size(max = 4)
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<DominoPlayer> players;
+    private List<DominoGamePlayer> players;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<DominoMove> moves;
+    private List<DominoGameMove> moves;
+
+    @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<DominoGameVote> votes;
 
     @ElementCollection
     @CollectionTable(
@@ -80,5 +84,17 @@ public class DominoGame {
 
     public boolean containsPlayer(User user) {
         return getPlayers().stream().anyMatch(it -> Objects.equals(it.getUser().getId(), user.getId()));
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean notWaitingForPlayers() {
+        return getStatus() != GameStatus.WAITING_FOR_PLAYERS;
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean cannotAcceptNewPlayers() {
+        return getPlayers().size() == 4;
     }
 }

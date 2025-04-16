@@ -1,15 +1,11 @@
 package org.playdomino.models.game.dto;
 
-import jakarta.persistence.*;
 import lombok.*;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserDTO;
-import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.DominoPlayer;
+import org.playdomino.models.game.DominoGamePlayer;
 import org.playdomino.models.game.DominoTile;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -18,17 +14,17 @@ import java.util.Objects;
 @NoArgsConstructor
 @Data
 @Builder
-public final class DominoPlayerDTO {
+public final class DominoGamePlayerDTO {
     private Long id;
     private UserDTO user;
     private List<DominoTile> hand;
     private boolean passedLastTurn;
     private boolean isHost;
 
-    public static DominoPlayerDTO of(
-            final DominoPlayer player, final User loggedUser
+    public static DominoGamePlayerDTO of(
+            final DominoGamePlayer player, final User loggedUser
     ) {
-        return DominoPlayerDTO
+        return DominoGamePlayerDTO
                 .builder()
                 .id(player.getId())
                 .user(UserDTO.of(player.getUser()))

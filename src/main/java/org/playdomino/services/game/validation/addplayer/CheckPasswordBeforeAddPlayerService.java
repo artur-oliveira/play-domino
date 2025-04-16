@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.game.DominoGameException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
-import org.playdomino.models.auth.User;
-import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.dto.AddPlayerToGame;
+import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +19,7 @@ public class CheckPasswordBeforeAddPlayerService implements BeforeAddPlayerServi
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public void process(AddPlayerToGame playerToGame) {
+    public void process(AddPlayerDominoGame playerToGame) {
         if (Objects.nonNull(playerToGame.getGame().getPassword()) && !passwordEncoder.matches(
                 playerToGame.getPassword(),
                 playerToGame.getGame().getPassword()

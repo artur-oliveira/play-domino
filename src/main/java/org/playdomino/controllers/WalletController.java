@@ -1,7 +1,7 @@
 package org.playdomino.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.playdomino.models.financial.Wallet;
+import org.playdomino.models.financial.dto.WalletDTO;
 import org.playdomino.services.financial.WalletService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +14,8 @@ public class WalletController {
     private final WalletService walletService;
 
     @GetMapping
-    public Wallet getWallet() {
-        return walletService.getCurrentUserWallet();
+    public WalletDTO getWallet() {
+        return WalletDTO.of(walletService.getCurrentUserWallet());
     }
 
 }

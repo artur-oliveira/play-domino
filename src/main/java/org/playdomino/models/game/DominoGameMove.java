@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DominoMove {
+public class DominoGameMove {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class DominoMove {
 
     @ManyToOne
     @JoinColumn(name = "player_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_move_player"))
-    private DominoPlayer player;
+    private DominoGamePlayer player;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tile_played")

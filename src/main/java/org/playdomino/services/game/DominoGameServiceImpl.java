@@ -6,12 +6,14 @@ import org.playdomino.exceptions.game.DominoGameException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.DominoPlayer;
-import org.playdomino.models.game.dto.AddPlayerToGame;
+import org.playdomino.models.game.GameStatus;
+import org.playdomino.models.game.dto.AddPlayerDominoGame;
+import org.playdomino.models.game.dto.CancelDominoGame;
 import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.services.game.validation.addplayer.BeforeAddPlayerService;
+import org.playdomino.services.game.validation.cancel.BeforeCancelGameService;
 import org.playdomino.services.game.validation.create.BeforeCreateGameService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +30,18 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
+    private final List<BeforeCancelGameService> beforeCancelGameServices;
     private final PasswordEncoder passwordEncoder;
     private final MessagesComponent messagesComponent;
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<DominoGame> findCurrentDominoGame() {
+        return dominoGameRepository.findDominoGameByStatusAndPlayerUser(
+                GameStatus.unfinisheds(),
+                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+        );
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -36,7 +49,7 @@ public class DominoGameServiceImpl implements DominoGameService {
         DominoGame currentGame = game.toGame(passwordEncoder);
         beforeCreateGameServiceList.forEach(service -> service.process(currentGame));
         DominoGame savedGame = dominoGameRepository.save(currentGame);
-        savedGame = addPlayerToDominoGame(AddPlayerToGame.builder().game(savedGame).user(savedGame.getHost()).password(game.getPassword()).build());
+        savedGame = addPlayerToDominoGame(AddPlayerDominoGame.builder().game(savedGame).user(savedGame.getHost()).password(game.getPassword()).build());
         return savedGame;
     }
 
@@ -49,7 +62,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DominoGame join(final JoinDominoGame join) {
-        return addPlayerToDominoGame(AddPlayerToGame
+        return addPlayerToDominoGame(AddPlayerDominoGame
                 .builder()
                 .game(findDominoGameById(join.getGameId()))
                 .password(join.getPassword())
@@ -57,11 +70,25 @@ public class DominoGameServiceImpl implements DominoGameService {
                 .build());
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public DominoGame addPlayerToDominoGame(final AddPlayerToGame addPlayerToGame) {
-        final DominoGame game = addPlayerToGame.getGame();
-        beforeAddPlayerServices.forEach(service -> service.process(addPlayerToGame));
-        game.getPlayers().add(addPlayerToGame.toDominoPlayer());
+    public DominoGame start(Long gameId) {
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public DominoGame cancel(final CancelDominoGame cancelDominoGame) {
+        final DominoGame game = findDominoGameById(cancelDominoGame.getGameId());
+        beforeCancelGameServices.forEach(service -> service.process(game));
+        return null;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public DominoGame addPlayerToDominoGame(final AddPlayerDominoGame addPlayerDominoGame) {
+        final DominoGame game = addPlayerDominoGame.getGame();
+        beforeAddPlayerServices.forEach(service -> service.process(addPlayerDominoGame));
+        game.getPlayers().add(addPlayerDominoGame.toDominoPlayer());
         return dominoGameRepository.saveAndFlush(game);
     }
 }

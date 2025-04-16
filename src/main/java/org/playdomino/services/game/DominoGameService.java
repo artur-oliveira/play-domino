@@ -1,8 +1,11 @@
 package org.playdomino.services.game;
 
 import org.playdomino.models.game.DominoGame;
+import org.playdomino.models.game.dto.CancelDominoGame;
 import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
+
+import java.util.Optional;
 
 public interface DominoGameService {
 
@@ -12,4 +15,9 @@ public interface DominoGameService {
 
     DominoGame join(JoinDominoGame joinDominoGame);
 
+    DominoGame start(Long gameId);
+
+    DominoGame cancel(CancelDominoGame cancelDominoGame);
+
+    Optional<DominoGame> findCurrentDominoGame();
 }

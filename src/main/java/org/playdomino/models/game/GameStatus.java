@@ -1,5 +1,7 @@
 package org.playdomino.models.game;
 
+import java.util.List;
+
 public enum GameStatus {
     WAITING_FOR_PLAYERS {
         @Override
@@ -25,6 +27,10 @@ public enum GameStatus {
             return false;
         }
     };
+
+    public static List<GameStatus> unfinisheds() {
+        return List.of(WAITING_FOR_PLAYERS, IN_PROGRESS);
+    }
 
     public abstract boolean ongoing();
 }

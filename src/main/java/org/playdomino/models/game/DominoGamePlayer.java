@@ -7,13 +7,18 @@ import org.playdomino.models.auth.User;
 import java.util.List;
 
 @Entity
-@Table(name = "domino_game_player")
+@Table(
+        name = "domino_game_player",
+        uniqueConstraints = {@UniqueConstraint(
+                name = "unique_domino_game_player", columnNames = {"user_id", "game_id"}
+        )}
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
-public class DominoPlayer {
+public class DominoGamePlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

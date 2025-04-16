@@ -1,9 +1,9 @@
 package org.playdomino.models.game.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserDTO;
 import org.playdomino.models.game.*;
@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,8 +29,8 @@ public final class DominoGameDTO {
 
     private UserDTO host;
 
-    private List<DominoPlayerDTO> players;
-    private List<DominoMoveDTO> moves;
+    private List<DominoGamePlayerDTO> players;
+    private List<DominoGameMoveDTO> moves;
     private List<DominoTile> pile;
 
     private int passCount;
@@ -40,7 +39,11 @@ public final class DominoGameDTO {
     private ZonedDateTime startedAt;
     private ZonedDateTime endedAt;
 
-    public static DominoGameDTO of(final DominoGame game) {
+    public static DominoGameDTO of(
+            final DominoGame game,
+            final List<DominoGamePlayer> players,
+            final List<DominoGameMove> moves
+    ) {
         final User loggedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return DominoGameDTO
                 .builder()
@@ -49,8 +52,8 @@ public final class DominoGameDTO {
                 .currentPlayer(game.getCurrentPlayer())
                 .betAmountCents(game.getBetAmountCents())
                 .host(UserDTO.of(game.getHost()))
-                .players(Optional.ofNullable(game.getPlayers()).orElseGet(ArrayList::new).stream().map(it -> DominoPlayerDTO.of(it, loggedUser)).toList())
-                .moves(Optional.ofNullable(game.getMoves()).orElseGet(ArrayList::new).stream().map(DominoMoveDTO::of).toList())
+                .players(Optional.ofNullable(players).orElseGet(ArrayList::new).stream().map(it -> DominoGamePlayerDTO.of(it, loggedUser)).toList())
+                .moves(Optional.ofNullable(moves).orElseGet(ArrayList::new).stream().map(DominoGameMoveDTO::of).toList())
                 .inviteCode(game.getInviteCode())
                 .createdAt(game.getCreatedAt())
                 .startedAt(game.getStartedAt())

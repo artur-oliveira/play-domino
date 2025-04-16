@@ -3,7 +3,7 @@ package org.playdomino.models.game.dto;
 import lombok.*;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.DominoPlayer;
+import org.playdomino.models.game.DominoGamePlayer;
 
 import java.util.Objects;
 
@@ -12,13 +12,13 @@ import java.util.Objects;
 @Builder
 @Getter
 @Setter
-public final class AddPlayerToGame {
+public final class AddPlayerDominoGame {
     private DominoGame game;
     private User user;
     private String password;
 
-    public DominoPlayer toDominoPlayer() {
-        return DominoPlayer
+    public DominoGamePlayer toDominoPlayer() {
+        return DominoGamePlayer
                 .builder()
                 .game(getGame())
                 .user(getUser())
