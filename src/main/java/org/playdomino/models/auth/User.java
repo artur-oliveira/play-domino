@@ -63,21 +63,17 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Country country;
 
-    @Builder.Default
     @Column(name = "account_non_expired", nullable = false)
-    private boolean accountNonExpired = false;
+    private boolean accountNonExpired;
 
-    @Builder.Default
     @Column(name = "account_non_locked", nullable = false)
-    private boolean accountNonLocked = false;
+    private boolean accountNonLocked;
 
-    @Builder.Default
     @Column(name = "credentials_non_expired", nullable = false)
-    private boolean credentialsNonExpired = false;
+    private boolean credentialsNonExpired;
 
-    @Builder.Default
     @Column(name = "enabled", nullable = false)
-    private boolean enabled = false;
+    private boolean enabled;
 
     @ElementCollection(targetClass = Role.class)
     @CollectionTable(

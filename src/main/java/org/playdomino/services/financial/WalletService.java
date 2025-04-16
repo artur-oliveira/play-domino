@@ -2,6 +2,10 @@ package org.playdomino.services.financial;
 
 import org.playdomino.models.auth.User;
 import org.playdomino.models.financial.Wallet;
+import org.playdomino.models.financial.WalletTransaction;
+import org.playdomino.models.financial.dto.WalletAmount;
+
+import java.math.BigDecimal;
 
 public interface WalletService {
 
@@ -9,4 +13,19 @@ public interface WalletService {
 
     Wallet getCurrentUserWallet();
 
+    void deposit(WalletAmount walletAmount);
+
+    void withdraw(WalletAmount walletAmount);
+
+    void confirmWithdraw(WalletAmount walletAmount);
+
+    void cancelWithdraw(WalletAmount walletAmount);
+
+    void lockForGame(WalletAmount walletAmount);
+
+    void unlockFromGame(WalletAmount walletAmount);
+
+    void prize(WalletAmount walletAmount);
+
+    void chargeFee(WalletAmount walletAmount);
 }
