@@ -43,7 +43,7 @@ public final class CreateDominoGame {
                 .password(Optional.ofNullable(getPassword()).map(passwordEncoder::encode).orElse(null))
                 .host((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .status(GameStatus.WAITING_FOR_PLAYERS)
-                .pile(Arrays.asList(DominoTile.values()))
+                .pile(new ArrayList<>(Arrays.asList(DominoTile.values())))
                 .players(new ArrayList<>())
                 .inviteCode(UUID.randomUUID().toString())
                 .build();

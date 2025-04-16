@@ -1,6 +1,9 @@
 package org.playdomino.services.game;
 
 import lombok.RequiredArgsConstructor;
+import org.playdomino.components.messages.MessagesComponent;
+import org.playdomino.exceptions.game.DominoGameException;
+import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.DominoPlayer;
@@ -25,6 +28,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
     private final PasswordEncoder passwordEncoder;
+    private final MessagesComponent messagesComponent;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -37,11 +41,17 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public DominoGame findDominoGameById(final Long id) {
+        return dominoGameRepository.findById(id).orElseThrow(() -> new DominoGameException(DominoGameExceptionConstants.GAME_NOT_FOUND, messagesComponent.getMessage(DominoGameExceptionConstants.GAME_NOT_FOUND)));
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public DominoGame join(final JoinDominoGame join) {
         return addPlayerToDominoGame(AddPlayerToGame
                 .builder()
-                .game(join.getGame())
+                .game(findDominoGameById(join.getGameId()))
                 .password(join.getPassword())
                 .user((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .build());

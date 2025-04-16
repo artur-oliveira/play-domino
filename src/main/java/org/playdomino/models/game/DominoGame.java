@@ -42,7 +42,7 @@ public class DominoGame {
     @JoinColumn(name = "host_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_host_user"))
     private User host;
 
-    @Size(min = 1, max = 4)
+    @Size(max = 4)
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DominoPlayer> players;
 
@@ -72,10 +72,10 @@ public class DominoGame {
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
 
-    @Column(name = "started_at", nullable = false)
+    @Column(name = "started_at")
     private ZonedDateTime startedAt;
 
-    @Column(name = "ended_at", nullable = false)
+    @Column(name = "ended_at")
     private ZonedDateTime endedAt;
 
     public boolean containsPlayer(User user) {

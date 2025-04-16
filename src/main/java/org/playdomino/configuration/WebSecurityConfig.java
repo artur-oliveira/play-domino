@@ -67,6 +67,7 @@ public class WebSecurityConfig {
                         // AuthController
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/wallet/**").hasRole("USER")
+                        .requestMatchers("/v1/domino-game/**").hasRole("USER")
                         // Any Other Request
                         .anyRequest().authenticated());
 

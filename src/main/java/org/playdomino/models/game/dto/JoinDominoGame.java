@@ -3,7 +3,6 @@ package org.playdomino.models.game.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.playdomino.models.game.DominoGame;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +11,7 @@ import org.playdomino.models.game.DominoGame;
 @Setter
 public final class JoinDominoGame {
     @JsonIgnore
-    private DominoGame game;
+    private Long gameId;
     @Pattern(
             regexp = "^[a-zA-Z0-9]{4,16}$",
             message = "{validation.dominogame.password}"
