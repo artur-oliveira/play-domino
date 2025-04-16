@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.playdomino.models.auth.User;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -35,6 +36,10 @@ public class DominoGame {
 
     @Column(name = "bet_amount_cents", nullable = false)
     private Long betAmountCents;
+
+    @ManyToOne
+    @JoinColumn(name = "host_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_host_user"))
+    private User host;
 
     @Size(min = 1, max = 4)
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})

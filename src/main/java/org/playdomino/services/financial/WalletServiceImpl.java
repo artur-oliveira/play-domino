@@ -51,7 +51,7 @@ public class WalletServiceImpl implements WalletService {
         final Wallet wallet = walletAmount.getWallet();
 
         if (wallet.cannotPerformTransaction(walletAmount.getAmountCents())) {
-            throw new IllegalArgumentException("Saldo insuficiente para saque.");
+            throw new WalletException(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE, messagesComponent.getMessage(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE));
         }
 
         wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());
@@ -85,7 +85,7 @@ public class WalletServiceImpl implements WalletService {
         final Wallet wallet = walletAmount.getWallet();
 
         if (wallet.cannotPerformTransaction(walletAmount.getAmountCents())) {
-            throw new IllegalArgumentException("Saldo insuficiente para entrar na partida.");
+            throw new WalletException(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE, messagesComponent.getMessage(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE));
         }
 
         wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());

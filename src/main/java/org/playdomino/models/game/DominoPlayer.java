@@ -38,5 +38,8 @@ public class DominoPlayer {
 
     @Column(name = "passed_last_turn", nullable = false)
     private boolean passedLastTurn;
+
+    @Column(name = "is_host", nullable = false)
+    private boolean isHost;
 }
 

@@ -6,4 +6,5 @@ public final class WalletExceptionConstants {
     }
 
     public static final String WALLET_DOES_NOT_EXISTS = "wallet.does-not-exists";
+    public static final String WALLET_INSUFFICIENT_BALANCE = "wallet.insufficient-balance";
 }
