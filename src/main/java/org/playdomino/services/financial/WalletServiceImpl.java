@@ -37,6 +37,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public boolean cannotPerformTransaction(User user, Long amountCents) {
+        return getUserWallet(user).cannotPerformTransaction(amountCents);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void deposit(final WalletAmount walletAmount) {
         final Wallet wallet = walletAmount.getWallet();

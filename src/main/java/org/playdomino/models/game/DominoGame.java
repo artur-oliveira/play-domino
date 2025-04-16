@@ -10,6 +10,7 @@ import org.playdomino.models.auth.User;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "domino_game", uniqueConstraints = {
@@ -76,4 +77,8 @@ public class DominoGame {
 
     @Column(name = "ended_at", nullable = false)
     private ZonedDateTime endedAt;
+
+    public boolean containsPlayer(User user) {
+        return getPlayers().stream().anyMatch(it -> Objects.equals(it.getUser().getId(), user.getId()));
+    }
 }

@@ -13,6 +13,8 @@ public interface WalletService {
 
     Wallet getCurrentUserWallet();
 
+    boolean cannotPerformTransaction(User user, Long amountCents);
+
     void deposit(WalletAmount walletAmount);
 
     void withdraw(WalletAmount walletAmount);
