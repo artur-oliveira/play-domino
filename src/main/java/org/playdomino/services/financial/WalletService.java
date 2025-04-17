@@ -2,10 +2,7 @@ package org.playdomino.services.financial;
 
 import org.playdomino.models.auth.User;
 import org.playdomino.models.financial.Wallet;
-import org.playdomino.models.financial.WalletTransaction;
 import org.playdomino.models.financial.dto.WalletAmount;
-
-import java.math.BigDecimal;
 
 public interface WalletService {
 

@@ -18,7 +18,12 @@ public class UserTokenServiceImpl implements UserTokenService {
     private final MessagesComponent messagesComponent;
 
     @Override
+    public UserTokenServiceProvider getProviderFor(UserToken login) {
+        return providers.stream().filter(it -> it.accepts(login)).findFirst().orElseThrow(() -> new UserException(AuthExceptionConstants.USER_INVALID_AUTHENTICATION, messagesComponent.getMessage(AuthExceptionConstants.USER_INVALID_AUTHENTICATION)));
+    }
+
+    @Override
     public JwtResponse getToken(UserToken login) {
-        return providers.stream().filter(it -> it.accepts(login)).findFirst().orElseThrow(() -> new UserException(AuthExceptionConstants.USER_INVALID_AUTHENTICATION, messagesComponent.getMessage(AuthExceptionConstants.USER_INVALID_AUTHENTICATION))).getToken(login);
+        return getProviderFor(login).getToken(login);
     }
 }

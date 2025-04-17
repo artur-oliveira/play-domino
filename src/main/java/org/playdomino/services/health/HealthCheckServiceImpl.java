@@ -11,6 +11,6 @@ public class HealthCheckServiceImpl implements HealthCheckService {
 
     @Override
     public void checkDatabaseConnection() {
-        entityManager.createNativeQuery("SELECT 1", Void.class);
+        entityManager.createNativeQuery("select 1", Void.class);
     }
 }

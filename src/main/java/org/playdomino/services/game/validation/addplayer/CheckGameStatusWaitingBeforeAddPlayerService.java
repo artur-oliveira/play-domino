@@ -2,7 +2,7 @@ package org.playdomino.services.game.validation.addplayer;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
-import org.playdomino.exceptions.game.DominoGameException;
+import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
@@ -19,7 +19,7 @@ public class CheckGameStatusWaitingBeforeAddPlayerService implements BeforeAddPl
     public void process(AddPlayerDominoGame playerToGame) {
         final DominoGame game = playerToGame.getGame();
         if (game.notWaitingForPlayers()) {
-            throw new DominoGameException(DominoGameExceptionConstants.NOT_WAITING_FOR_PLAYERS, messagesComponent.getMessage(DominoGameExceptionConstants.NOT_WAITING_FOR_PLAYERS));
+            throw new DominoGameAddPlayerException(DominoGameExceptionConstants.NOT_WAITING_FOR_PLAYERS, messagesComponent.getMessage(DominoGameExceptionConstants.NOT_WAITING_FOR_PLAYERS));
         }
     }
 }

@@ -2,13 +2,12 @@ package org.playdomino.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserCreate;
 import org.playdomino.models.auth.dto.UserToken;
 import org.playdomino.services.auth.UserService;
-import org.playdomino.services.auth.verification.UserVerificationService;
 import org.playdomino.services.auth.token.UserTokenService;
+import org.playdomino.services.auth.verification.UserVerificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +21,9 @@ public class AuthController {
     private final UserVerificationService userVerificationService;
 
     @PostMapping("/register")
-    public User register(@Valid @RequestBody UserCreate user) {
-        return userService.create(user);
+    public ResponseEntity<Void> register(@Valid @RequestBody UserCreate user) {
+        userService.create(user);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/verify/{id}")

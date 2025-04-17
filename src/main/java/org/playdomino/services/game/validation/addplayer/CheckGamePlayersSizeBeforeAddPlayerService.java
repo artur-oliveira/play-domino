@@ -2,7 +2,7 @@ package org.playdomino.services.game.validation.addplayer;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
-import org.playdomino.exceptions.game.DominoGameException;
+import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
@@ -19,7 +19,7 @@ public class CheckGamePlayersSizeBeforeAddPlayerService implements BeforeAddPlay
     public void process(AddPlayerDominoGame playerToGame) {
         final DominoGame game = playerToGame.getGame();
         if (game.cannotAcceptNewPlayers()) {
-            throw new DominoGameException(DominoGameExceptionConstants.GAME_IS_FULL, messagesComponent.getMessage(DominoGameExceptionConstants.GAME_IS_FULL));
+            throw new DominoGameAddPlayerException(DominoGameExceptionConstants.GAME_IS_FULL, messagesComponent.getMessage(DominoGameExceptionConstants.GAME_IS_FULL));
         }
     }
 }

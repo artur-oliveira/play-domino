@@ -1,6 +1,7 @@
 package org.playdomino.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.models.generic.GenericResponse;
 import org.playdomino.services.health.HealthCheckService;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class HealthCheckController {
     private final HealthCheckService healthCheckService;
+    private final MessagesComponent messagesComponent;
 
     @GetMapping
     public ResponseEntity<GenericResponse> checkDatabaseConnection() {
         healthCheckService.checkDatabaseConnection();
-        return ResponseEntity.ok(GenericResponse.builder().message("Play Domino is healthy!").build());
+        return ResponseEntity.ok(GenericResponse.builder().message(messagesComponent.getMessage("domino.healthy")).build());
     }
 }
 

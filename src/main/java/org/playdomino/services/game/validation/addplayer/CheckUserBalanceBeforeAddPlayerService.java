@@ -2,7 +2,7 @@ package org.playdomino.services.game.validation.addplayer;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
-import org.playdomino.exceptions.game.DominoGameException;
+import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.playdomino.services.financial.WalletService;
@@ -19,7 +19,7 @@ public class CheckUserBalanceBeforeAddPlayerService implements BeforeAddPlayerSe
     @Transactional(readOnly = true)
     public void process(AddPlayerDominoGame playerToGame) {
         if (walletService.cannotPerformTransaction(playerToGame.getUser(), playerToGame.getGame().getBetAmountCents())) {
-            throw new DominoGameException(DominoGameExceptionConstants.NOT_AVAILABLE_FOR_BET, messagesComponent.getMessage(DominoGameExceptionConstants.NOT_AVAILABLE_FOR_BET));
+            throw new DominoGameAddPlayerException(DominoGameExceptionConstants.NOT_AVAILABLE_FOR_BET, messagesComponent.getMessage(DominoGameExceptionConstants.NOT_AVAILABLE_FOR_BET));
         }
     }
 }

@@ -2,7 +2,7 @@ package org.playdomino.services.game.validation.addplayer;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
-import org.playdomino.exceptions.game.DominoGameException;
+import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +24,7 @@ public class CheckPasswordBeforeAddPlayerService implements BeforeAddPlayerServi
                 playerToGame.getPassword(),
                 playerToGame.getGame().getPassword()
         )) {
-            throw new DominoGameException(DominoGameExceptionConstants.INVALID_PASSWORD, messagesComponent.getMessage(DominoGameExceptionConstants.INVALID_PASSWORD));
+            throw new DominoGameAddPlayerException(DominoGameExceptionConstants.INVALID_PASSWORD, messagesComponent.getMessage(DominoGameExceptionConstants.INVALID_PASSWORD));
         }
     }
 }
