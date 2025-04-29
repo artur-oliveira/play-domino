@@ -42,7 +42,7 @@ public final class WalletTransactionDTO {
     }
 
     public String getDisplayAmountCents() {
-        return CurrencyUtils.toCurrency(getAmountCents() / 100.0);
+        return CurrencyUtils.toCurrency(Math.floorDiv(getAmountCents(), 100));
     }
 }
 

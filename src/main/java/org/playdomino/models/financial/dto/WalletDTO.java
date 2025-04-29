@@ -42,18 +42,18 @@ public final class WalletDTO {
     }
 
     public String getDisplayAvailableCents() {
-        return CurrencyUtils.toCurrency(getAvailableCents() / 100.0);
+        return CurrencyUtils.toCurrency(Math.floorDiv(getAvailableCents(), 100));
     }
 
     public String getDisplayLockedCents() {
-        return CurrencyUtils.toCurrency(getLockedCents() / 100.0);
+        return CurrencyUtils.toCurrency(Math.floorDiv(getLockedCents(), 100));
     }
 
     public String getDisplayPendingDepositCents() {
-        return CurrencyUtils.toCurrency(getPendingDepositCents() / 100.0);
+        return CurrencyUtils.toCurrency(Math.floorDiv(getPendingDepositCents(), 100));
     }
 
     public String getDisplayPendingWithdrawCents() {
-        return CurrencyUtils.toCurrency(getPendingWithdrawCents() / 100.0);
+        return CurrencyUtils.toCurrency(Math.floorDiv(getPendingWithdrawCents(), 100));
     }
 }
