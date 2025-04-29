@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.playdomino.components.utils.RandomUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -112,7 +113,7 @@ public class User implements UserDetails {
         return UserVerification
                 .builder()
                 .user(this)
-                .token(UUID.randomUUID().toString())
+                .token(RandomUtils.getAlphaNumericRandomString(6))
                 .build();
     }
 }

@@ -6,10 +6,12 @@ import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.playdomino.services.financial.WalletService;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Order(2)
 @RequiredArgsConstructor
 public class CheckUserBalanceBeforeAddPlayerService implements BeforeAddPlayerService {
 

@@ -62,7 +62,7 @@ class AuthControllerTest extends GenericIntegrationTest {
         Assertions.assertNotNull(token);
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/v1/auth/verify/" + token)
+                        .post("/v1/auth/verify/" + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNoContent());

@@ -2,7 +2,9 @@ package org.playdomino.models.financial;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.playdomino.models.auth.User;
 
@@ -24,24 +26,50 @@ public class Wallet {
     private Long id;
 
     @Builder.Default
-    @Min(0)
+    @PositiveOrZero
     @Column(name = "available_cents", nullable = false)
     private Long availableCents = 0L;
 
     @Builder.Default
-    @Min(0)
+    @PositiveOrZero
     @Column(name = "locked_cents", nullable = false)
     private Long lockedCents = 0L;
 
     @Builder.Default
-    @Min(0)
+    @PositiveOrZero
     @Column(name = "pending_withdraw_cents", nullable = false)
     private Long pendingWithdrawCents = 0L;
 
     @Builder.Default
-    @Min(0)
+    @PositiveOrZero
     @Column(name = "pending_deposit_cents", nullable = false)
     private Long pendingDepositCents = 0L;
+
+    @Builder.Default
+    @PositiveOrZero
+    @Column(name = "minimum_deposit_cents", nullable = false)
+    private Long minimumDepositCents = 500L;
+
+    @Builder.Default
+    @PositiveOrZero
+    @Column(name = "minimum_withdraw_cents", nullable = false)
+    private Long minimumWithdrawCents = 500L;
+
+    @Builder.Default
+    @PositiveOrZero
+    @Column(name = "maximum_deposit_cents", nullable = false)
+    private Long maximumDepositCents = 500_000L;
+
+    @Builder.Default
+    @PositiveOrZero
+    @Column(name = "maximum_withdraw_cents", nullable = false)
+    private Long maximumWithdrawCents = 500_000L;
+
+    @Builder.Default
+    @Min(0)
+    @Max(100)
+    @Column(name = "fee_percent", nullable = false)
+    private Integer feePercent = 3;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY)

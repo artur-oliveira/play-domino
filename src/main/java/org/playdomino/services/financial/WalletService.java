@@ -12,9 +12,11 @@ public interface WalletService {
 
     boolean cannotPerformTransaction(User user, Long amountCents);
 
-    void deposit(WalletAmount walletAmount);
+    void initiateDeposit(WalletAmount walletAmount);
 
-    void withdraw(WalletAmount walletAmount);
+    void confirmDeposit(WalletAmount walletAmount);
+
+    void initiateWithdraw(WalletAmount walletAmount);
 
     void confirmWithdraw(WalletAmount walletAmount);
 
@@ -26,5 +28,4 @@ public interface WalletService {
 
     void prize(WalletAmount walletAmount);
 
-    void chargeFee(WalletAmount walletAmount);
 }

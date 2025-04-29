@@ -13,9 +13,11 @@ public class CreateWalletServiceImpl implements AfterVerificationService {
 
     @Override
     public void afterVerification(User user) {
-        walletRepository.saveAndFlush(Wallet
-                .builder()
-                .user(user)
-                .build());
+        if (!walletRepository.existsWalletByUser(user)) {
+            walletRepository.saveAndFlush(Wallet
+                    .builder()
+                    .user(user)
+                    .build());
+        }
     }
 }

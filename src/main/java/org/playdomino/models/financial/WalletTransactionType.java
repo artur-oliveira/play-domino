@@ -6,17 +6,21 @@ public enum WalletTransactionType {
         public boolean incoming() {
             return true;
         }
+
+        @Override
+        public String propertyName() {
+            return "transaction.deposit";
+        }
     },
     WITHDRAW {
         @Override
         public boolean incoming() {
             return false;
         }
-    },
-    CONFIRM_WITHDRAW {
+
         @Override
-        public boolean incoming() {
-            return false;
+        public String propertyName() {
+            return "transaction.withdraw";
         }
     },
     CANCEL_WITHDRAW {
@@ -24,17 +28,32 @@ public enum WalletTransactionType {
         public boolean incoming() {
             return true;
         }
+
+        @Override
+        public String propertyName() {
+            return "transaction.cancel-withdraw";
+        }
     },
     GAME_ENTRY {
         @Override
         public boolean incoming() {
             return false;
         }
+
+        @Override
+        public String propertyName() {
+            return "transaction.game-entry";
+        }
     },
     GAME_PRIZE {
         @Override
         public boolean incoming() {
-            return false;
+            return true;
+        }
+
+        @Override
+        public String propertyName() {
+            return "transaction.game-prize";
         }
     },
     FEE {
@@ -42,14 +61,26 @@ public enum WalletTransactionType {
         public boolean incoming() {
             return false;
         }
+
+        @Override
+        public String propertyName() {
+            return "transaction.fee";
+        }
     },
     ADJUSTMENT {
         @Override
         public boolean incoming() {
             return true;
         }
+
+        @Override
+        public String propertyName() {
+            return "transaction.adjustment";
+        }
     };
 
     public abstract boolean incoming();
+
+    public abstract String propertyName();
 }
 

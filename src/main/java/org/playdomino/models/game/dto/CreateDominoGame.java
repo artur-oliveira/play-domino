@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import org.playdomino.components.auth.UserUtils;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.DominoTile;
@@ -41,7 +42,7 @@ public final class CreateDominoGame {
                 .builder()
                 .betAmountCents(getBetAmountCents())
                 .password(Optional.ofNullable(getPassword()).map(passwordEncoder::encode).orElse(null))
-                .host((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .host(UserUtils.currentUser())
                 .status(GameStatus.WAITING_FOR_PLAYERS)
                 .pile(new ArrayList<>(Arrays.asList(DominoTile.values())))
                 .players(new ArrayList<>())

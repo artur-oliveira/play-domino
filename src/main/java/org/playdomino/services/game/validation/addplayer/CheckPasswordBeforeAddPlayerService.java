@@ -5,6 +5,7 @@ import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 
 @Service
+@Order(0)
 @RequiredArgsConstructor
 public class CheckPasswordBeforeAddPlayerService implements BeforeAddPlayerService {
 

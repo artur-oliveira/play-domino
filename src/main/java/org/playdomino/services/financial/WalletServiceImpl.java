@@ -1,6 +1,7 @@
 package org.playdomino.services.financial;
 
 import lombok.RequiredArgsConstructor;
+import org.playdomino.components.auth.UserUtils;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.financial.WalletException;
 import org.playdomino.exceptions.financial.WalletExceptionConstants;
@@ -11,9 +12,15 @@ import org.playdomino.models.financial.WalletTransactionType;
 import org.playdomino.models.financial.dto.WalletAmount;
 import org.playdomino.repositories.financial.WalletRepository;
 import org.playdomino.repositories.financial.WalletTransactionRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.playdomino.services.financial.validation.confirmdeposit.BeforeConfirmDepositService;
+import org.playdomino.services.financial.validation.confirmwithdraw.BeforeConfirmWithdrawService;
+import org.playdomino.services.financial.validation.deposit.BeforeDepositService;
+import org.playdomino.services.financial.validation.withdraw.BeforeWithdrawService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,10 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
     private final MessagesComponent messagesComponent;
     private final WalletTransactionRepository walletTransactionRepository;
+    private final List<BeforeDepositService> beforeDepositServiceList;
+    private final List<BeforeConfirmDepositService> beforeConfirmDepositServices;
+    private final List<BeforeWithdrawService> beforeWithdrawServices;
+    private final List<BeforeConfirmWithdrawService> beforeConfirmWithdrawServices;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,8 +43,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     @Transactional(readOnly = true)
     public Wallet getCurrentUserWallet() {
-        final User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return getUserWallet(user);
+        return getUserWallet(UserUtils.currentUser());
     }
 
     @Override
@@ -42,37 +52,54 @@ public class WalletServiceImpl implements WalletService {
         return getUserWallet(user).cannotPerformTransaction(amountCents);
     }
 
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deposit(final WalletAmount walletAmount) {
+    public void initiateDeposit(final WalletAmount walletAmount) {
+        beforeDepositServiceList.forEach(it -> it.process(walletAmount));
         final Wallet wallet = walletAmount.getWallet();
-        wallet.setAvailableCents(wallet.getAvailableCents() + walletAmount.getAmountCents());
+        wallet.setPendingDepositCents(wallet.getPendingDepositCents() + walletAmount.getAmountCents());
         walletRepository.saveAndFlush(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.DEPOSIT));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void withdraw(final WalletAmount walletAmount) {
+    public void confirmDeposit(final WalletAmount walletAmount) {
         final Wallet wallet = walletAmount.getWallet();
+        beforeConfirmDepositServices.forEach(it -> it.process(walletAmount));
+        wallet.setPendingDepositCents(0L);
+        wallet.setAvailableCents(wallet.getAvailableCents() + walletAmount.getAmountCents());
+        walletRepository.saveAndFlush(wallet);
+        logTransaction(walletTransaction(WalletTransactionType.DEPOSIT, walletAmount));
+    }
 
-        if (wallet.cannotPerformTransaction(walletAmount.getAmountCents())) {
-            throw new WalletException(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE, messagesComponent.getMessage(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE));
-        }
-
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void initiateWithdraw(WalletAmount walletAmount) {
+        beforeWithdrawServices.forEach(it -> it.process(walletAmount));
+        final Wallet wallet = walletAmount.getWallet();
         wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());
         wallet.setPendingWithdrawCents(wallet.getPendingWithdrawCents() + walletAmount.getAmountCents());
-        walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.WITHDRAW));
+        walletRepository.saveAndFlush(wallet);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void confirmWithdraw(final WalletAmount walletAmount) {
         final Wallet wallet = walletAmount.getWallet();
-        wallet.setPendingWithdrawCents(wallet.getPendingWithdrawCents() - walletAmount.getAmountCents());
-        walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.CONFIRM_WITHDRAW));
+        beforeConfirmWithdrawServices.forEach(it -> it.process(walletAmount));
+
+        final Long amountCents = walletAmount.getAmountCents();
+        final Integer feePercent = wallet.getFeePercent();
+
+        final Long feeAmount = (amountCents * feePercent) / 100;
+        final Long netAmount = amountCents - feeAmount;
+
+        wallet.setPendingWithdrawCents(0L);
+        walletRepository.saveAndFlush(wallet);
+
+        logTransaction(walletTransaction(WalletTransactionType.FEE, WalletAmount.builder().wallet(wallet).amountCents(feeAmount).build()));
+        logTransaction(walletTransaction(WalletTransactionType.WITHDRAW, WalletAmount.builder().wallet(wallet).amountCents(netAmount).build()));
     }
 
     @Override
@@ -82,7 +109,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setPendingWithdrawCents(wallet.getPendingWithdrawCents() - walletAmount.getAmountCents());
         wallet.setAvailableCents(wallet.getAvailableCents() + walletAmount.getAmountCents());
         walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.CANCEL_WITHDRAW));
+        logTransaction(walletTransaction(WalletTransactionType.CANCEL_WITHDRAW, walletAmount));
     }
 
     @Override
@@ -97,7 +124,7 @@ public class WalletServiceImpl implements WalletService {
         wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());
         wallet.setLockedCents(wallet.getLockedCents() + walletAmount.getAmountCents());
         walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.GAME_ENTRY));
+        logTransaction(walletTransaction(WalletTransactionType.GAME_ENTRY, walletAmount));
     }
 
     @Override
@@ -115,16 +142,11 @@ public class WalletServiceImpl implements WalletService {
         final Wallet wallet = walletAmount.getWallet();
         wallet.setLockedCents(wallet.getLockedCents() - walletAmount.getAmountCents());
         walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.GAME_PRIZE));
+        logTransaction(walletTransaction(WalletTransactionType.GAME_PRIZE, walletAmount));
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void chargeFee(final WalletAmount walletAmount) {
-        final Wallet wallet = walletAmount.getWallet();
-        wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());
-        walletRepository.save(wallet);
-        logTransaction(walletAmount.walletTransaction(WalletTransactionType.FEE));
+    private WalletTransaction walletTransaction(WalletTransactionType type, WalletAmount walletAmount) {
+        return walletAmount.walletTransaction(type, messagesComponent.getMessage(type.propertyName()));
     }
 
     @Transactional(rollbackFor = Exception.class)

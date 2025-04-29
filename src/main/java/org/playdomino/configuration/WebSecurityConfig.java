@@ -18,7 +18,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -49,15 +54,24 @@ public class WebSecurityConfig {
         return new MvcRequestMatcher.Builder(introspector);
     }
 
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.applyPermitDefaultValues();
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity security,
-            AuthTokenFilter authTokenFilter
+            AuthTokenFilter authTokenFilter,
+            CorsConfigurationSource corsConfigurationSource
     ) throws Exception {
         security
-                .cors((cors) -> {
-                })
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling((httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer.authenticationEntryPoint(getAuthenticationEntryPoint())))
                 .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -66,8 +80,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/v1/health-check").permitAll()
                         // AuthController
                         .requestMatchers("/v1/auth/**").permitAll()
-                        .requestMatchers("/v1/wallet/**").hasRole("USER")
-                        .requestMatchers("/v1/domino-game/**").hasRole("USER")
+                        .requestMatchers("/v1/wallet/*/confirm").hasRole("ADMIN")
                         // Any Other Request
                         .anyRequest().authenticated());
 

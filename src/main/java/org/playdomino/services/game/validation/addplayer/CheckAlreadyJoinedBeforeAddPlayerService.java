@@ -8,10 +8,12 @@ import org.playdomino.models.auth.User;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.playdomino.repositories.game.DominoGamePlayerRepository;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Order(3)
 @RequiredArgsConstructor
 public class CheckAlreadyJoinedBeforeAddPlayerService implements BeforeAddPlayerService {
 

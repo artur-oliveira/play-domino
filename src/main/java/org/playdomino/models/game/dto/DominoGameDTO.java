@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.playdomino.components.auth.UserUtils;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserDTO;
 import org.playdomino.models.game.*;
@@ -44,7 +45,7 @@ public final class DominoGameDTO {
             final List<DominoGamePlayer> players,
             final List<DominoGameMove> moves
     ) {
-        final User loggedUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        final User loggedUser = UserUtils.currentUser();
         return DominoGameDTO
                 .builder()
                 .id(game.getId())

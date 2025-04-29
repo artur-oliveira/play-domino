@@ -2,11 +2,11 @@ package org.playdomino.services.auth.token;
 
 import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserToken;
-import org.playdomino.services.auth.token.provider.UserTokenServiceProvider;
+import org.playdomino.services.auth.token.provider.TokenProvider;
 
 public interface UserTokenService {
 
-    UserTokenServiceProvider getProviderFor(UserToken userToken);
+    TokenProvider getProviderFor(UserToken userToken);
 
-    JwtResponse getToken(UserToken login);
+    JwtResponse authenticateAndGenerateTokens(UserToken login);
 }
