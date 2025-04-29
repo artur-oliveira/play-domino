@@ -92,7 +92,7 @@ public class WalletServiceImpl implements WalletService {
         final Long amountCents = walletAmount.getAmountCents();
         final Integer feePercent = wallet.getFeePercent();
 
-        final Long feeAmount = (amountCents * feePercent) / 100;
+        final Long feeAmount = Math.floorDiv(amountCents * feePercent, 100);
         final Long netAmount = amountCents - feeAmount;
 
         wallet.setPendingWithdrawCents(0L);
