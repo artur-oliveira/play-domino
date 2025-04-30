@@ -18,10 +18,10 @@ const WalletWithdrawModalComponent: FC<WalletWithdrawModalProps> = ({wallet, isO
     };
 
     const displayValidationMessage = (amount: number) => {
-        if (amount === null || amount === undefined) {
+        if (amount === null || amount === undefined || maxAmount === 0) {
             return null;
         }
-        return `O valor deve ser entre ${formatCurrency((wallet.minimumWithdrawCents).toString())} e ${formatCurrency((maxAmount).toString())}`
+        return `O valor deve ser entre ${formatCurrency((wallet.minimumWithdrawCents).toString())} e ${formatCurrency(maxAmount.toString())}`
     }
     return (
         <WalletAmountModalComponent

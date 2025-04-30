@@ -32,7 +32,7 @@ const WalletActionsComponent: FC<WalletActionsProps> = ({
             />}
             {isLoadingWallet ? <Skeleton className="h-11 w-28"/> : <ButtonComponent
                 label="Sacar"
-                disabled={wallet && wallet.pendingWithdrawCents > 0}
+                disabled={wallet && (wallet.pendingWithdrawCents > 0 || wallet.availableCents < wallet.minimumWithdrawCents)}
                 loading={isPendingWithdraw}
                 onClick={() => onClickWithdraw(true)}
                 className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl shadow-md text-sm font-medium transition-all ease-in-out transform hover:scale-105"

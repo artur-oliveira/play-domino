@@ -43,41 +43,42 @@ const UserWalletPage = () => {
     }
 
     return (
-        <div className="p-4 max-w-4xl mx-auto">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Minha Carteira</h1>
+        <div className="bg-zinc-800/50 backdrop-blur-md rounded-xl shadow px-6 py-4 mx-4 mt-4 max-w-7xl w-full self-center">
+            <div className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Minha Carteira</h1>
 
-                {/* BOTÕES DE AÇÃO */}
-                <WalletActionsComponent
-                    isLoadingWallet={wallet.isLoading}
-                    wallet={wallet.data}
-                    isPendingDeposit={depositMutation.isPending}
-                    isPendingWithdraw={withdrawMutation.isPending}
-                    onClickDeposit={depositModal.openModal}
-                    onClickWithdraw={withdrawModal.openModal}/>
+                    {/* BOTÕES DE AÇÃO */}
+                    <WalletActionsComponent
+                        isLoadingWallet={wallet.isLoading}
+                        wallet={wallet.data}
+                        isPendingDeposit={depositMutation.isPending}
+                        isPendingWithdraw={withdrawMutation.isPending}
+                        onClickDeposit={depositModal.openModal}
+                        onClickWithdraw={withdrawModal.openModal}/>
+                </div>
+                {/* SALDOS */}
+                <WalletBalanceComponent/>
+                {/* TRANSAÇÕES */}
+                <WalletTransactionsComponent/>
+
+                {wallet.data &&
+                    <WalletDepositModalComponent
+                        wallet={wallet.data}
+                        isOpen={depositModal.isOpen}
+                        onConfirm={handleConfirmDeposit}
+                        onClose={depositModal.closeModal}
+                    />}
+
+                {wallet.data &&
+                    <WalletWithdrawModalComponent
+                        wallet={wallet.data}
+                        isOpen={withdrawModal.isOpen}
+                        onConfirm={handleConfirmWithdraw}
+                        onClose={withdrawModal.closeModal}
+                    />}
             </div>
-            {/* SALDOS */}
-            <WalletBalanceComponent/>
-            {/* TRANSAÇÕES */}
-            <WalletTransactionsComponent/>
-
-            {wallet.data &&
-                <WalletDepositModalComponent
-                    wallet={wallet.data}
-                    isOpen={depositModal.isOpen}
-                    onConfirm={handleConfirmDeposit}
-                    onClose={depositModal.closeModal}
-                />}
-
-            {wallet.data &&
-                <WalletWithdrawModalComponent
-                    wallet={wallet.data}
-                    isOpen={withdrawModal.isOpen}
-                    onConfirm={handleConfirmWithdraw}
-                    onClose={withdrawModal.closeModal}
-                />}
         </div>
-
     );
 };
 

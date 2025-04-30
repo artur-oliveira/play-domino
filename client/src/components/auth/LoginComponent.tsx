@@ -4,7 +4,7 @@ import {ErrorMessage} from "../../models/error-message";
 import {LoginPayload} from "../../models/auth.models.ts";
 import {useLoginUser} from "../../api/auth/useLoginUser.ts";
 import {useAuth} from "../../providers/auth/useAuth.tsx";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {isAxiosError} from "axios";
 
 export default function LoginComponent() {
@@ -56,11 +56,20 @@ export default function LoginComponent() {
     };
 
     return (
-        <GenericFormComponent
-            fields={fields}
-            onSubmit={handleSubmit}
-            submitLabel="Entrar"
-            isLoading={mutation.isPending}
-        />
+        <div className="w-full max-w-lg bg-zinc-800/50 backdrop-blur-md shadow-lg rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-center mb-6 text-[#fdeccd]">Entrar</h2>
+            <GenericFormComponent
+                fields={fields}
+                onSubmit={handleSubmit}
+                submitLabel="Entrar"
+                isLoading={mutation.isPending}
+            />
+            <div className="mt-4 text-center">
+                <p>
+                    Não possui uma conta?{' '}
+                    <Link to="/auth/register" className="text-[#fdeccd] hover:underline">Clique aqui</Link>
+                </p>
+            </div>
+        </div>
     );
 }

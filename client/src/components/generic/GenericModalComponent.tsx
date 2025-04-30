@@ -1,4 +1,5 @@
 import React, {FC, useEffect, useRef} from "react";
+import ReactDOM from "react-dom";
 
 type GenericModalComponentProps = {
     isOpen: boolean;
@@ -32,14 +33,16 @@ const GenericModalComponent: FC<GenericModalComponentProps> = ({child, isOpen, o
 
     if (!isOpen) return null;
 
-    return (<div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
+    return ReactDOM.createPortal(
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
             <div ref={modalRef}
                  className="bg-zinc-900 border border-zinc-700 rounded-xl p-6 w-full max-w-sm relative text-[#fdeccd] shadow-lg"
             >
                 {child}
             </div>
-        </div>
-    )
+        </div>,
+        document.body
+    );
 }
 
 export default GenericModalComponent;

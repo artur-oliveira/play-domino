@@ -12,7 +12,8 @@ export const TopBar = () => {
         closeModal();
     };
     return (
-        <header className="w-full bg-zinc-800 px-6 py-4 flex justify-between items-center border-b border-zinc-700">
+        <header
+            className="bg-zinc-800/50 backdrop-blur-md rounded-xl shadow px-6 py-4 mx-4 mt-4 max-w-7xl w-full self-center flex justify-between items-center">
             {/* Lado esquerdo */}
             <TopBarLeftSide/>
             <TopBarRightSide setModalOpen={openModal} wallet={wallet}/>

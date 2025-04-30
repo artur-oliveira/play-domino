@@ -1,10 +1,10 @@
 import GenericFormComponent, {FieldConfig} from "../generic/GenericFormComponent";
-import {formatCPF, isCpfValid} from "../../utils/cpfUtils.ts";
 import {toast} from "sonner";
 import {AxiosError} from "axios";
 import {ErrorMessage} from "../../models/error-message";
 import {RegisterPayload} from "../../models/auth.models.ts";
 import {useRegisterUser} from "../../api/auth/useRegisterUser.ts";
+import {Link} from "react-router-dom";
 
 export default function RegisterComponent() {
     const mutation = useRegisterUser();
@@ -26,20 +26,6 @@ export default function RegisterComponent() {
                 /^(?!.*[._]{2})(?!.*[._]$)[a-zA-Z][a-zA-Z0-9._]{2,31}$/.test(value)
                     ? null
                     : "Usuário inválido",
-        },
-        {name: "firstname", label: "Nome", type: "text", required: true},
-        {name: "lastname", label: "Sobrenome", type: "text", required: true},
-        {
-            name: "federalDocument",
-            label: "CPF",
-            type: "text",
-            format: formatCPF,
-            required: true,
-            validate: (value) => {
-                if (!/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(value)) return "Formato inválido";
-                if (!isCpfValid(value)) return "CPF inválido";
-                return null;
-            },
         },
         {
             name: "password",
@@ -79,11 +65,21 @@ export default function RegisterComponent() {
     };
 
     return (
-        <GenericFormComponent
-            fields={fields}
-            onSubmit={handleSubmit}
-            submitLabel="Cadastrar"
-            isLoading={mutation.isPending}
-        />
+        <div className="w-full max-w-lg bg-zinc-800/50 backdrop-blur-md shadow-lg rounded-xl p-6">
+            <h2 className="text-2xl font-semibold text-center mb-6 text-[#fdeccd]">Nova Conta</h2>
+            <GenericFormComponent
+                fields={fields}
+                onSubmit={handleSubmit}
+                submitLabel="Cadastrar"
+                isLoading={mutation.isPending}
+            />
+            <div className="mt-4 text-center">
+                <p>
+                    Já tem uma conta?{' '}
+                    <Link to="/auth/login" className="text-[#fdeccd] hover:underline">Clique aqui</Link>
+                </p>
+            </div>
+        </div>
+
     );
 }
