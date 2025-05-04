@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "user", uniqueConstraints = {
@@ -34,14 +36,6 @@ public class User implements UserDetails {
     private Long id;
 
     @NotEmpty
-    @Column(name = "firstname", nullable = false)
-    private String firstname;
-
-    @NotEmpty
-    @Column(name = "lastname", nullable = false)
-    private String lastname;
-
-    @NotEmpty
     @Column(name = "username", nullable = false)
     private String username;
 
@@ -55,8 +49,13 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @NotEmpty
-    @Column(name = "federal_document", unique = true, nullable = false)
+    @Column(name = "firstname")
+    private String firstname;
+
+    @Column(name = "lastname")
+    private String lastname;
+
+    @Column(name = "federal_document", unique = true)
     private String federalDocument;
 
     @NotNull
@@ -105,7 +104,10 @@ public class User implements UserDetails {
     @Transient
     @JsonProperty("display_name")
     public String getDisplayName() {
-        return String.join(" ", getFirstname(), getLastname());
+        if (Objects.isNull(getFirstname()) && Objects.isNull(getLastname())) {
+            return getUsername();
+        }
+        return Stream.of(getFirstname(), getLastname()).filter(Objects::nonNull).map(String::trim).filter(it -> !it.isBlank()).collect(Collectors.joining(" "));
     }
 
     @JsonIgnore
@@ -113,8 +115,20 @@ public class User implements UserDetails {
         return UserVerification
                 .builder()
                 .user(this)
-                .token(RandomUtils.getAlphaNumericRandomString(6))
+                .token(RandomUtils.getAlphaUpperNumericRandomString(6))
                 .build();
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean cannotBetOrPerformTransactions() {
+        return Objects.isNull(getFederalDocument());
+    }
+
+    @Transient
+    @JsonIgnore
+    public boolean canUpdateFederalDocument() {
+        return Objects.isNull(getFederalDocument());
     }
 }
 

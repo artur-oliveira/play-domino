@@ -3,14 +3,12 @@ package org.playdomino.models.auth.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.br.CPF;
 import org.playdomino.models.auth.Country;
 import org.playdomino.models.auth.Role;
 import org.playdomino.models.auth.User;
@@ -27,7 +25,8 @@ import java.util.UUID;
 public final class UserCreate {
     @NotNull
     private Country country;
-    @NotEmpty
+    @CPF
+    @Size(min = 11, max = 11)
     private String federalDocument;
     @Email
     private String email;
@@ -37,9 +36,15 @@ public final class UserCreate {
             message = "{validation.user.username.pattern}"
     )
     private String username;
-    @NotNull
+    @Pattern(
+            regexp = "^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$",
+            message = "{validation.user.name.pattern}"
+    )
     private String firstname;
-    @NotNull
+    @Pattern(
+            regexp = "^[A-Za-zÀ-ÿ]+([ '-][A-Za-zÀ-ÿ]+)*$",
+            message = "{validation.user.name.pattern}"
+    )
     private String lastname;
     @NotEmpty
     @Pattern(

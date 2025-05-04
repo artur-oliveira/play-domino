@@ -1,11 +1,14 @@
 package org.playdomino.components.utils;
 
-import org.springframework.context.i18n.LocaleContextHolder;
-
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 public final class CurrencyUtils {
-    public static String toCurrency(double amount) {
-        return NumberFormat.getCurrencyInstance(LocaleContextHolder.getLocale()).format(amount);
+
+    public static String toCurrency(long amountCents, Locale locale) {
+        double amount = new BigDecimal(amountCents).setScale(2, RoundingMode.UNNECESSARY).divide(new BigDecimal("100.00"), RoundingMode.HALF_EVEN).doubleValue();
+        return NumberFormat.getCurrencyInstance(locale).format(amount).replace(" "," ");
     }
 }

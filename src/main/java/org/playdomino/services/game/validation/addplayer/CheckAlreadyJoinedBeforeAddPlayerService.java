@@ -24,7 +24,7 @@ public class CheckAlreadyJoinedBeforeAddPlayerService implements BeforeAddPlayer
     public void process(AddPlayerDominoGame playerToGame) {
         final DominoGame game = playerToGame.getGame();
         final User user = playerToGame.getUser();
-        dominoGamePlayerRepository.findDominoGamePlayerByGameAndUser(game, user).ifPresent((player) -> {
+        dominoGamePlayerRepository.findDominoGamePlayerByGameIdAndUserId(game.getId(), user.getId()).ifPresent((player) -> {
             throw new DominoGameAddPlayerException(DominoGameExceptionConstants.USER_ALREADY_JOINED_GAME, messagesComponent.getMessage(DominoGameExceptionConstants.USER_ALREADY_JOINED_GAME));
         });
     }

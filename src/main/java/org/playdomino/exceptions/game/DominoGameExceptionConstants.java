@@ -6,6 +6,7 @@ public final class DominoGameExceptionConstants {
     }
 
     public static final String GAME_NOT_FOUND = "dominogame.not-found";
+        public static final String NOT_HAVE_INFO_FOR_BET = "dominogame.not-have-info-for-bet";
     public static final String NOT_AVAILABLE_FOR_BET = "dominogame.not-available-for-bet";
     public static final String NOT_A_PLAYER = "dominogame.not-a-player";
 

@@ -1,5 +1,6 @@
 package org.playdomino.components.messages;
 
+import org.playdomino.components.auth.UserUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
@@ -25,9 +26,9 @@ public class MessagesComponent {
 
     public String getMessage(String key, Object[] args) {
         try {
-            return exceptionMessageSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            return exceptionMessageSource.getMessage(key, args, UserUtils.currentUser().getCountry().getJavaLocale());
         } catch (NoSuchMessageException e) {
-            return messagesSource.getMessage(key, args, LocaleContextHolder.getLocale());
+            return messagesSource.getMessage(key, args, UserUtils.currentUser().getCountry().getJavaLocale());
         }
     }
 }

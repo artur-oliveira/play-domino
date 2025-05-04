@@ -9,6 +9,8 @@ import org.playdomino.models.financial.Wallet;
 import org.playdomino.models.financial.WalletTransaction;
 import org.playdomino.models.financial.WalletTransactionType;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.ZonedDateTime;
 import java.util.Currency;
 
@@ -22,6 +24,7 @@ public final class WalletTransactionDTO {
     private WalletTransactionType type;
     private boolean isIncoming;
     private Long amountCents;
+    private String displayAmountCents;
     private String description;
     private ZonedDateTime createdAt;
     private Long createdById;
@@ -33,16 +36,13 @@ public final class WalletTransactionDTO {
                 .id(walletTransaction.getId())
                 .type(walletTransaction.getType())
                 .isIncoming(walletTransaction.getType().incoming())
+                .displayAmountCents(CurrencyUtils.toCurrency(walletTransaction.getAmountCents(), walletTransaction.getWallet().getUser().getCountry().getJavaLocale()))
                 .amountCents(walletTransaction.getAmountCents())
                 .description(walletTransaction.getDescription())
                 .createdAt(walletTransaction.getCreatedAt())
                 .createdById(walletTransaction.getCreatedBy().getId())
                 .createdByName(walletTransaction.getCreatedBy().getDisplayName())
                 .build();
-    }
-
-    public String getDisplayAmountCents() {
-        return CurrencyUtils.toCurrency(Math.floorDiv(getAmountCents(), 100));
     }
 }
 

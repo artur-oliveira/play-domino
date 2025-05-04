@@ -25,7 +25,7 @@ public class DominoGamePlayerServiceImpl implements DominoGamePlayerService {
     @Transactional(readOnly = true)
     public DominoGamePlayer getPlayerInGame(final DominoGame game) {
         Optional<DominoGamePlayer> gamePlayer = dominoGamePlayerRepository
-                .findDominoGamePlayerByGameAndUser(game, UserUtils.currentUser());
+                .findDominoGamePlayerByGameIdAndUserId(game.getId(), UserUtils.currentUser().getId());
 
         return gamePlayer.orElseThrow(() ->
                 new DominoGameException(NOT_A_PLAYER_CODE,

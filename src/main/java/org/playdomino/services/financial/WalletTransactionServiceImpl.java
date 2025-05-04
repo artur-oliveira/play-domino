@@ -23,12 +23,12 @@ public class WalletTransactionServiceImpl implements WalletTransactionService {
     @Override
     @Transactional(readOnly = true)
     public List<WalletTransaction> findAllTransactionsByWallet(Wallet wallet, Integer page, Integer size) {
-        return walletTransactionRepository.findWalletTransactionByWallet(
+        return walletTransactionRepository.findWalletTransactionByWalletOrderByIdDesc(
                 wallet,
                 PageRequest.of(
                         Math.max(Optional.ofNullable(page).map(it -> it - 1).orElse(0), 0),
-                        Math.max(Optional.ofNullable(size).orElse(10), 50)
+                        Math.min(Optional.ofNullable(size).orElse(10), 50)
                 )
-        );
+        ).toList();
     }
 }

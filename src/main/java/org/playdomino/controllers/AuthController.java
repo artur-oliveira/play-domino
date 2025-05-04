@@ -6,13 +6,11 @@ import lombok.SneakyThrows;
 import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserCreate;
 import org.playdomino.models.auth.dto.UserToken;
-import org.playdomino.services.auth.UserService;
+import org.playdomino.services.auth.user.UserService;
 import org.playdomino.services.auth.token.UserTokenService;
 import org.playdomino.services.auth.verification.UserVerificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
 
 @RestController
 @RequestMapping("/v1/auth")

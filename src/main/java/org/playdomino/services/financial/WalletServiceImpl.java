@@ -12,6 +12,8 @@ import org.playdomino.models.financial.WalletTransactionType;
 import org.playdomino.models.financial.dto.WalletAmount;
 import org.playdomino.repositories.financial.WalletRepository;
 import org.playdomino.repositories.financial.WalletTransactionRepository;
+import org.playdomino.services.financial.process.confirmdeposit.AfterConfirmDepositService;
+import org.playdomino.services.financial.process.confirmwithdraw.AfterConfirmWithdrawService;
 import org.playdomino.services.financial.validation.confirmdeposit.BeforeConfirmDepositService;
 import org.playdomino.services.financial.validation.confirmwithdraw.BeforeConfirmWithdrawService;
 import org.playdomino.services.financial.validation.deposit.BeforeDepositService;
@@ -19,8 +21,9 @@ import org.playdomino.services.financial.validation.withdraw.BeforeWithdrawServi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +34,10 @@ public class WalletServiceImpl implements WalletService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final List<BeforeDepositService> beforeDepositServiceList;
     private final List<BeforeConfirmDepositService> beforeConfirmDepositServices;
+    private final List<AfterConfirmDepositService> afterConfirmDepositServices;
     private final List<BeforeWithdrawService> beforeWithdrawServices;
     private final List<BeforeConfirmWithdrawService> beforeConfirmWithdrawServices;
+    private final List<AfterConfirmWithdrawService> afterConfirmWithdrawServices;
 
     @Override
     @Transactional(readOnly = true)
@@ -70,7 +75,9 @@ public class WalletServiceImpl implements WalletService {
         wallet.setPendingDepositCents(0L);
         wallet.setAvailableCents(wallet.getAvailableCents() + walletAmount.getAmountCents());
         walletRepository.saveAndFlush(wallet);
-        logTransaction(walletTransaction(WalletTransactionType.DEPOSIT, walletAmount));
+        final WalletTransaction deposit = logTransaction(walletTransaction(WalletTransactionType.DEPOSIT, walletAmount));
+
+        afterConfirmDepositServices.forEach(it -> it.process(deposit));
     }
 
     @Override
@@ -90,16 +97,23 @@ public class WalletServiceImpl implements WalletService {
         beforeConfirmWithdrawServices.forEach(it -> it.process(walletAmount));
 
         final Long amountCents = walletAmount.getAmountCents();
-        final Integer feePercent = wallet.getFeePercent();
+        final Long feeAmount = BigDecimal
+                .valueOf(amountCents)
+                .setScale(2, RoundingMode.UNNECESSARY)
+                .multiply(BigDecimal.valueOf(wallet.getFeePercent()))
+                .divide(BigDecimal.valueOf(100L).setScale(2, RoundingMode.UNNECESSARY), RoundingMode.HALF_EVEN)
+                .setScale(0, RoundingMode.HALF_EVEN)
+                .longValue();
 
-        final Long feeAmount = Math.floorDiv(amountCents * feePercent, 100);
         final Long netAmount = amountCents - feeAmount;
 
         wallet.setPendingWithdrawCents(0L);
         walletRepository.saveAndFlush(wallet);
 
         logTransaction(walletTransaction(WalletTransactionType.FEE, WalletAmount.builder().wallet(wallet).amountCents(feeAmount).build()));
-        logTransaction(walletTransaction(WalletTransactionType.WITHDRAW, WalletAmount.builder().wallet(wallet).amountCents(netAmount).build()));
+        final WalletTransaction withdraw = logTransaction(walletTransaction(WalletTransactionType.WITHDRAW, WalletAmount.builder().wallet(wallet).amountCents(netAmount).build()));
+
+        afterConfirmWithdrawServices.forEach(it -> it.process(withdraw));
     }
 
     @Override
@@ -150,7 +164,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void logTransaction(WalletTransaction transaction) {
-        walletTransactionRepository.saveAndFlush(transaction);
+    public WalletTransaction logTransaction(WalletTransaction transaction) {
+        return walletTransactionRepository.saveAndFlush(transaction);
     }
 }

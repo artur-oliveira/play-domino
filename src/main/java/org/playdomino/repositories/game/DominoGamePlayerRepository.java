@@ -20,5 +20,10 @@ public interface DominoGamePlayerRepository extends JpaRepository<DominoGamePlay
     List<DominoGamePlayer> findAllByGameOrderById(@Param("game") DominoGame game);
 
     @Transactional(readOnly = true)
-    Optional<DominoGamePlayer> findDominoGamePlayerByGameAndUser(DominoGame game, User user);
+    @Query(value = "select d from DominoGamePlayer d where d.game.id = :game_id and d.user.id = :user_id")
+    Optional<DominoGamePlayer> findDominoGamePlayerByGameIdAndUserId(@Param("game_id") Long gameId, @Param("user_id") Long userId);
+
+    @Transactional(readOnly = true)
+    @Query(value = "select exists(d.id) from DominoGamePlayer d where d.game.id = :game_id and d.user.id = :user_id")
+    boolean existsDominoGamePlayerByGameIdAndUserId(@Param("game_id") Long gameId, @Param("user_id") Long userId);
 }

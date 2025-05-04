@@ -59,6 +59,7 @@ public class WalletController {
     public ResponseEntity<Void> confirmDeposit(
             @Valid @RequestBody WalletAmount walletAmount
     ) {
+        // TODO: Not use walletService.getCurrentUserWallet(); because the user that will make this request is not the user that initiated the deposit (only admin).
         walletService.confirmDeposit(
                 WalletAmount.builder()
                         .wallet(walletService.getCurrentUserWallet())
@@ -85,6 +86,7 @@ public class WalletController {
     public ResponseEntity<Void> confirmWithdraw(
             @Valid @RequestBody WalletDepositAmount walletAmount
     ) {
+        // TODO: Not use walletService.getCurrentUserWallet(); because the user that will make this request is not the user that initiated the withdraw (only admin).
         walletService.confirmWithdraw(
                 WalletAmount.builder()
                         .wallet(walletService.getCurrentUserWallet())

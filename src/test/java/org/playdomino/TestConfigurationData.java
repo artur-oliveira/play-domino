@@ -6,7 +6,7 @@ import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserCreate;
 import org.playdomino.repositories.auth.UserRepository;
 import org.playdomino.repositories.auth.UserVerificationRepository;
-import org.playdomino.services.auth.UserService;
+import org.playdomino.services.auth.user.UserService;
 import org.playdomino.services.auth.verification.UserVerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

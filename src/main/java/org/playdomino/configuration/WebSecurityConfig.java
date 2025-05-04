@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -78,11 +79,15 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((http) -> http
                         // HealthController
                         .requestMatchers("/v1/health-check").permitAll()
+                        // WebSocket endpoint
+                        .requestMatchers("/ws").permitAll()
                         // AuthController
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/wallet/*/confirm").hasRole("ADMIN")
+                        .requestMatchers("/v1/notification").hasRole("ADMIN")
                         // Any Other Request
-                        .anyRequest().authenticated());
+                        .anyRequest().authenticated())
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         security.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
