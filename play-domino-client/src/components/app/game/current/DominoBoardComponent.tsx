@@ -12,7 +12,7 @@ const DominoBoardComponent: FC<DominoBoardComponentProps> = ({
                                                              }) => {
     const currentPlayer = game.players.find(p => p.currentUser);
     return (
-        <div className="bg-zinc-700 p-4 rounded-2xl shadow flex flex-col justify-between h-[75vh]">
+        <div className="bg-zinc-700 p-4 rounded-2xl shadow flex flex-col justify-between h-[55vh]">
             <GamePlayersAreaComponent game={game}/>
             <div className="flex-1 flex justify-center items-center my-4">
                 <BoardCenterComponent game={game}/>
