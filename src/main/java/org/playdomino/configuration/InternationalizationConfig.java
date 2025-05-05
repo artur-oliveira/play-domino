@@ -25,6 +25,16 @@ public class InternationalizationConfig {
         source.setBasename("classpath:i18n/Messages");
         source.setDefaultLocale(Locale.ENGLISH);
         source.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
+
+        return source;
+    }
+
+    @Bean
+    public MessageSource faqMessagesSource() {
+        ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
+        source.setBasename("classpath:i18n/FAQMessages");
+        source.setDefaultLocale(Locale.ENGLISH);
+        source.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
         return source;
     }
 }
