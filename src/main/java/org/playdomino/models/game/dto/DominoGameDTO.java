@@ -8,7 +8,6 @@ import org.playdomino.components.auth.UserUtils;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserDTO;
 import org.playdomino.models.game.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public final class DominoGameDTO {
 
     private List<DominoGamePlayerDTO> players;
     private List<DominoGameMoveDTO> moves;
+    private List<DominoGameVoteDTO> votes;
     private List<DominoTile> pile;
 
     private int passCount;
@@ -43,7 +43,8 @@ public final class DominoGameDTO {
     public static DominoGameDTO of(
             final DominoGame game,
             final List<DominoGamePlayer> players,
-            final List<DominoGameMove> moves
+            final List<DominoGameMove> moves,
+            final List<DominoGameVote> votes
     ) {
         final User loggedUser = UserUtils.currentUser();
         return DominoGameDTO
@@ -55,6 +56,7 @@ public final class DominoGameDTO {
                 .host(UserDTO.of(game.getHost()))
                 .players(Optional.ofNullable(players).orElseGet(ArrayList::new).stream().map(it -> DominoGamePlayerDTO.of(it, loggedUser)).toList())
                 .moves(Optional.ofNullable(moves).orElseGet(ArrayList::new).stream().map(DominoGameMoveDTO::of).toList())
+                .votes(Optional.ofNullable(votes).orElseGet(ArrayList::new).stream().map(DominoGameVoteDTO::of).toList())
                 .inviteCode(game.getInviteCode())
                 .createdAt(game.getCreatedAt())
                 .startedAt(game.getStartedAt())

@@ -14,10 +14,12 @@ import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
-import org.playdomino.services.game.validation.addplayer.BeforeAddPlayerService;
-import org.playdomino.services.game.validation.cancel.BeforeCancelGameService;
-import org.playdomino.services.game.validation.create.BeforeCreateGameService;
-import org.playdomino.services.game.validation.vote.BeforeGameVoteService;
+import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
+import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
+import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
+import org.playdomino.services.game.process.create.BeforeCreateGameService;
+import org.playdomino.services.game.process.vote.AfterGameVoteService;
+import org.playdomino.services.game.process.vote.BeforeGameVoteService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +35,12 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
+    private final List<AfterAddPlayerService> afterAddPlayerServices;
     private final List<BeforeCancelGameService> beforeCancelGameServices;
+
     private final List<BeforeGameVoteService> beforeGameVoteServices;
+    private final List<AfterGameVoteService> afterGameVoteServices;
+
     private final PasswordEncoder passwordEncoder;
     private final MessagesComponent messagesComponent;
     private final DominoGamePlayerService dominoGamePlayerService;
@@ -82,11 +88,13 @@ public class DominoGameServiceImpl implements DominoGameService {
         DominoGame game = findDominoGameById(cancelRequest.getGameId());
         cancelRequest.setGame(game);
 
-        processGameVoteValidations(game);
-        processCancelGameValidations(cancelRequest);
+        processBeforeGameVote(game);
+        processBeforeCancelGame(cancelRequest);
 
         DominoGameVote vote = processGameCancellationVote(game, cancelRequest);
-        updateGameStatusIfApproved(game, vote);
+        setGameCanceledIfApproved(game, vote);
+
+        processAfterGameVote(game, vote);
 
         return game;
     }
@@ -94,9 +102,11 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Transactional(rollbackFor = Exception.class)
     DominoGame addPlayerToDominoGame(final AddPlayerDominoGame addPlayerRequest) {
         DominoGame game = addPlayerRequest.getGame();
-        validateAddPlayerRequest(addPlayerRequest);
+        processBeforeAddPlayerRequest(addPlayerRequest);
         game.getPlayers().add(addPlayerRequest.toDominoPlayer());
-        return dominoGameRepository.saveAndFlush(game);
+        game = dominoGameRepository.saveAndFlush(game);
+        processAfterAddPlayerRequest(addPlayerRequest);
+        return game;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -125,17 +135,27 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void validateAddPlayerRequest(AddPlayerDominoGame request) {
+    void processBeforeAddPlayerRequest(AddPlayerDominoGame request) {
         beforeAddPlayerServices.forEach(service -> service.process(request));
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void processGameVoteValidations(DominoGame game) {
+    void processAfterAddPlayerRequest(AddPlayerDominoGame request) {
+        afterAddPlayerServices.forEach(service -> service.process(request));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processBeforeGameVote(DominoGame game) {
         beforeGameVoteServices.forEach(service -> service.process(game));
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void processCancelGameValidations(CancelDominoGame cancelRequest) {
+    void processAfterGameVote(DominoGame game, DominoGameVote vote) {
+        afterGameVoteServices.forEach(service -> service.process(game, vote));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processBeforeCancelGame(CancelDominoGame cancelRequest) {
         beforeCancelGameServices.forEach(service -> service.process(cancelRequest));
     }
 
@@ -149,7 +169,7 @@ public class DominoGameServiceImpl implements DominoGameService {
         return vote;
     }
 
-    private void updateGameStatusIfApproved(DominoGame game, DominoGameVote vote) {
+    private void setGameCanceledIfApproved(DominoGame game, DominoGameVote vote) {
         if (vote.getVoteType().isApproved(game)) {
             game.setStatus(GameStatus.CANCELLED);
         }

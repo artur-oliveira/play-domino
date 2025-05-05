@@ -9,6 +9,11 @@ public enum VoteType {
         public List<Long> getNeededVotesPlayersIds(DominoGame game) {
             return game.getPlayers().stream().map(DominoGamePlayer::getId).toList();
         }
+
+        @Override
+        public String propertyName() {
+            return "domino.game.vote.cancel-game";
+        }
     };
 
     public boolean isApproved(DominoGame game) {
@@ -19,4 +24,6 @@ public enum VoteType {
     }
 
     abstract List<Long> getNeededVotesPlayersIds(DominoGame game);
+
+    public abstract String propertyName();
 }

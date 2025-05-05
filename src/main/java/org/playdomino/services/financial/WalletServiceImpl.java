@@ -13,11 +13,12 @@ import org.playdomino.models.financial.dto.WalletAmount;
 import org.playdomino.repositories.financial.WalletRepository;
 import org.playdomino.repositories.financial.WalletTransactionRepository;
 import org.playdomino.services.financial.process.confirmdeposit.AfterConfirmDepositService;
+import org.playdomino.services.financial.process.confirmdeposit.BeforeConfirmDepositService;
 import org.playdomino.services.financial.process.confirmwithdraw.AfterConfirmWithdrawService;
-import org.playdomino.services.financial.validation.confirmdeposit.BeforeConfirmDepositService;
-import org.playdomino.services.financial.validation.confirmwithdraw.BeforeConfirmWithdrawService;
-import org.playdomino.services.financial.validation.deposit.BeforeDepositService;
-import org.playdomino.services.financial.validation.withdraw.BeforeWithdrawService;
+import org.playdomino.services.financial.process.confirmwithdraw.BeforeConfirmWithdrawService;
+import org.playdomino.services.financial.process.deposit.BeforeDepositService;
+import org.playdomino.services.financial.process.lock.BeforeLockService;
+import org.playdomino.services.financial.process.withdraw.BeforeWithdrawService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class WalletServiceImpl implements WalletService {
     private final List<BeforeWithdrawService> beforeWithdrawServices;
     private final List<BeforeConfirmWithdrawService> beforeConfirmWithdrawServices;
     private final List<AfterConfirmWithdrawService> afterConfirmWithdrawServices;
+    private final List<BeforeLockService> beforeLockServices;
 
     @Override
     @Transactional(readOnly = true)
@@ -131,13 +133,12 @@ public class WalletServiceImpl implements WalletService {
     public void lockForGame(final WalletAmount walletAmount) {
         final Wallet wallet = walletAmount.getWallet();
 
-        if (wallet.cannotPerformTransaction(walletAmount.getAmountCents())) {
-            throw new WalletException(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE, messagesComponent.getMessage(WalletExceptionConstants.WALLET_INSUFFICIENT_BALANCE));
-        }
+        beforeLockServices.forEach(it -> it.process(walletAmount));
 
         wallet.setAvailableCents(wallet.getAvailableCents() - walletAmount.getAmountCents());
         wallet.setLockedCents(wallet.getLockedCents() + walletAmount.getAmountCents());
         walletRepository.save(wallet);
+
         logTransaction(walletTransaction(WalletTransactionType.GAME_ENTRY, walletAmount));
     }
 

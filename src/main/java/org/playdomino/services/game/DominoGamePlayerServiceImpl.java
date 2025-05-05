@@ -1,5 +1,6 @@
 package org.playdomino.services.game;
 
+import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.auth.UserUtils;
 import org.playdomino.components.messages.MessagesComponent;
@@ -23,7 +24,7 @@ public class DominoGamePlayerServiceImpl implements DominoGamePlayerService {
 
     @Override
     @Transactional(readOnly = true)
-    public DominoGamePlayer getPlayerInGame(final DominoGame game) {
+    public @Nonnull DominoGamePlayer getPlayerInGame(final DominoGame game) {
         Optional<DominoGamePlayer> gamePlayer = dominoGamePlayerRepository
                 .findDominoGamePlayerByGameIdAndUserId(game.getId(), UserUtils.currentUser().getId());
 
