@@ -5,7 +5,7 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement>, Ref
     labelClassName?: string;
     onchange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     validators?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    error?: string;
+    error?: string | null;
     onClickButton?: () => void;
     iconButton?: React.ReactNode
     helpText?: string;
@@ -67,7 +67,7 @@ const InputComponent: FC<InputComponentProps> = ({
                 {iconButton}
             </button>}
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
         {!error && helpText && (
             <p className="text-sm text-zinc-400 mt-1">{helpText}</p>
         )}

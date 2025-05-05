@@ -3,8 +3,8 @@ import {toast} from "sonner";
 import {AxiosError} from "axios";
 import {ErrorMessage} from "../../models/error-message";
 import {RegisterPayload} from "../../models/auth.models.ts";
-import {useRegisterUser} from "../../api/auth/useRegisterUser.ts";
 import {Link, useNavigate} from "react-router-dom";
+import {useRegisterUser} from "../../api/auth.api.ts";
 
 export default function RegisterComponent() {
     const mutation = useRegisterUser();

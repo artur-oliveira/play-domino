@@ -1,5 +1,5 @@
 import {Skeleton} from "../../generic/Skeleton.tsx";
-import {useGetCurrentWallet} from "../../../api/wallet/useGetWallet.ts";
+import {useGetCurrentWallet} from "../../../api/wallet.api.ts";
 
 
 const WalletBalanceComponent = () => {

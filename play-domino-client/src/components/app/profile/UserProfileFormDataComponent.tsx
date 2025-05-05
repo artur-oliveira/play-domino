@@ -1,10 +1,10 @@
-import GenericFormComponent, {FieldConfig} from "../generic/GenericFormComponent.tsx";
+import GenericFormComponent, {FieldConfig} from "../../generic/GenericFormComponent.tsx";
 import {FC} from "react";
-import {CurrentUser, UserUpdate} from "../../models/users.models.ts";
-import {formatCPF, isCpfValid} from "../../utils/cpfUtils.ts";
-import {useUpdateMe} from "../../api/user/useUpdateMe.ts";
-import {ErrorUtils} from "../../utils/errorUtils.ts";
-import {onlyStringDigits} from "../../utils/stringUtils.ts";
+import {CurrentUser, UserUpdate} from "../../../models/users.models.ts";
+import {formatCPF, isCpfValid} from "../../../utils/cpfUtils.ts";
+import {ErrorUtils} from "../../../utils/errorUtils.ts";
+import {onlyStringDigits} from "../../../utils/stringUtils.ts";
+import {useUpdateMe} from "../../../api/user.api.ts";
 
 type UserProfileFormDataProps = {
     user: CurrentUser;

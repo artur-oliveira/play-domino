@@ -1,6 +1,7 @@
 package org.playdomino.services.game.validation.addplayer;
 
 import lombok.RequiredArgsConstructor;
+import org.playdomino.components.auth.UserUtils;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.game.DominoGameAddPlayerException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
@@ -23,7 +24,7 @@ public class CheckLastGameBeforeAddPlayerService implements BeforeAddPlayerServi
 
     @Transactional(readOnly = true)
     public void process(AddPlayerDominoGame playerToGame) {
-        if (dominoGameRepository.existsDominoGameByStatusAndPlayerUser(GameStatus.unfinisheds(), (User) SecurityContextHolder.getContext().getAuthentication())) {
+        if (dominoGameRepository.existsDominoGameByStatusAndPlayerUser(GameStatus.unfinisheds(), UserUtils.currentUser())) {
             throw new DominoGameAddPlayerException(DominoGameExceptionConstants.LAST_GAME_NOT_FINISHED, messagesComponent.getMessage(DominoGameExceptionConstants.LAST_GAME_NOT_FINISHED));
         }
     }

@@ -1,9 +1,9 @@
-import UserProfileHeaderComponent from "../../components/profile/UserProfileHeaderComponent.tsx";
-import UserProfileInfoComponent from "../../components/profile/UserProfileInfoComponent.tsx";
-import {useGetMe} from "../../api/user/useGetMe.ts";
+import UserProfileHeaderComponent from "../../components/app/profile/UserProfileHeaderComponent.tsx";
+import UserProfileInfoComponent from "../../components/app/profile/UserProfileInfoComponent.tsx";
+import {useUser} from "../../providers/user/useUser.tsx";
 
 const UserProfilePage = () => {
-    const {data: user, isLoading} = useGetMe();
+    const {user, isLoading} = useUser();
 
     return (
         <div

@@ -1,5 +1,5 @@
-import {CurrentUser} from "../../models/users.models.ts";
-import {Skeleton} from "../generic/Skeleton.tsx";
+import {CurrentUser} from "../../../models/users.models.ts";
+import {Skeleton} from "../../generic/Skeleton.tsx";
 import {FaUserCircle} from "react-icons/fa";
 import UserProfileAchievementsComponent from "./UserProfileAchievementsComponent.tsx";
 import UserProfileFormDataComponent from "./UserProfileFormDataComponent.tsx";

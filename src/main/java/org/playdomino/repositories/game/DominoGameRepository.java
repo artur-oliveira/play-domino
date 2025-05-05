@@ -17,7 +17,7 @@ public interface DominoGameRepository extends JpaRepository<DominoGame, Long> {
     @Transactional(readOnly = true)
     Optional<DominoGame> findDominoGameByHostOrderByIdDesc(User host);
 
-    @Query(value = "select exists(dg.id) from DominoGame dg join dg.players dgp where dgp.user = :user AND dg.status in (:status_list)")
+    @Query(value = "select exists(select dg.id from DominoGame dg join dg.players dgp where dgp.user = :user AND dg.status in (:status_list))")
     @Transactional(readOnly = true)
     boolean existsDominoGameByStatusAndPlayerUser(@Param("status_list") List<GameStatus> statusList, @Param("user") User user);
 

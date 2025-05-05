@@ -2,10 +2,10 @@ import GenericFormComponent, {FieldConfig} from "../generic/GenericFormComponent
 import {toast} from "sonner";
 import {ErrorMessage} from "../../models/error-message";
 import {LoginPayload} from "../../models/auth.models.ts";
-import {useLoginUser} from "../../api/auth/useLoginUser.ts";
 import {useAuth} from "../../providers/auth/useAuth.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import {isAxiosError} from "axios";
+import {useLoginUser} from "../../api/auth.api.ts";
 
 export default function LoginComponent() {
     const mutation = useLoginUser();

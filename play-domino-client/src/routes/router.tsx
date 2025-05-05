@@ -13,6 +13,7 @@ import UserProfilePage from "../pages/app/UserProfilePage.tsx";
 import UserWalletPage from "../pages/app/UserWalletPage.tsx";
 import UserProvider from "../providers/user/UserProvider.tsx";
 import {WebSocketProvider} from "../providers/websocket/WebSocketProvider.tsx";
+import DominoCurrentGamePage from "../pages/app/DominoCurrentGamePage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -46,6 +47,10 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 element: <DominoAppPage/>
+            },
+            {
+                path: "/app/game",
+                element: <DominoCurrentGamePage/>
             },
             {
                 path: "/app/profile",

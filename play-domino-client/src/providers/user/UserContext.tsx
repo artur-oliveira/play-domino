@@ -6,6 +6,8 @@ interface UserContextType {
     isLoading: boolean;
     isError: boolean;
     displayCurrency: (val: string | number) => string;
+    displayDate: (val: string) => string;
+    displayDateTime: (val: string) => string;
     refetch: () => void;
 }
 

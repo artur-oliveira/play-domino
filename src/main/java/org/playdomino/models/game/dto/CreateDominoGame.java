@@ -28,6 +28,10 @@ public final class CreateDominoGame {
     @Min(0)
     public Long betAmountCents;
 
+    @NotNull
+    @Builder.Default
+    public boolean visible = Boolean.TRUE;
+
     @Pattern(
             regexp = "^[a-zA-Z0-9]{4,16}$",
             message = "{validation.dominogame.password}"
@@ -44,6 +48,7 @@ public final class CreateDominoGame {
                 .password(Optional.ofNullable(getPassword()).map(passwordEncoder::encode).orElse(null))
                 .host(UserUtils.currentUser())
                 .status(GameStatus.WAITING_FOR_PLAYERS)
+                .visible(isVisible())
                 .pile(new ArrayList<>(Arrays.asList(DominoTile.values())))
                 .players(new ArrayList<>())
                 .inviteCode(UUID.randomUUID().toString())

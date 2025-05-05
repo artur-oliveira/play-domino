@@ -1,10 +1,10 @@
-import {useGetTransactions} from "../../../api/wallet/useGetTransactions.ts";
 import {Skeleton} from "../../generic/Skeleton.tsx";
 import {WalletTransactionResponse} from "../../../models/wallet.models.ts";
 import {useWebSocketContext} from "../../../providers/websocket/useWebSocket.tsx";
 import {CurrentUser} from "../../../models/users.models.ts";
 import {FC, useEffect} from "react";
 import {toast} from "sonner";
+import {useGetTransactions} from "../../../api/wallet.api.ts";
 
 type WalletTransactionsComponentProps = {
     user: CurrentUser;

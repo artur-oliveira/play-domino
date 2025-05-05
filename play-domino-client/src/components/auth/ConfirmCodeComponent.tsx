@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
 import ButtonComponent from "../generic/ButtonComponent.tsx";
-import {useConfirmCode} from "../../api/auth/useConfirmCode.ts";
 import {toast} from "sonner";
 import {useNavigate} from "react-router-dom";
 import {AxiosError} from "axios";
 import {ErrorMessage} from "../../models/error-message.ts";
 import InputComponent from "../generic/InputComponent.tsx";
+import {useConfirmCode} from "../../api/auth.api.ts";
 
 type Props = {
     length?: number;
@@ -67,7 +67,8 @@ export default function ConfirmCodeComponent({length = 6}: Props) {
         setIsLoadingResend(true);
         try {
             const code = values.join("");
-            console.log(code);
+            // TODO: Implement resend submit
+            console.info(`Not implemented code ${code}`)
         } finally {
             setIsLoadingResend(false);
         }

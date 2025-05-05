@@ -4,12 +4,14 @@ interface ButtonComponentProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     loading?: boolean;
     label: string | ReactNode;
     labelLoading?: string;
+    ignoreGenericProps?: boolean;
     bgColor?: string;
 }
 
 const ButtonComponent: FC<ButtonComponentProps> = ({
                                                        loading = false,
                                                        label,
+                                                       ignoreGenericProps = false,
                                                        labelLoading = "Enviando...",
                                                        className = "",
                                                        bgColor = "bg-[#fdeccd]",
@@ -19,9 +21,9 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
         <button
             disabled={loading || props.disabled}
             className={`
-                py-3 px-6 rounded-md font-semibold transition ${bgColor}
+                ${ignoreGenericProps ? '' : `py-3 px-6 rounded-md font-semibold transition ${bgColor}`} 
                 ${className}
-                ${loading || props.disabled ? `${bgColor}/60 cursor-not-allowed` : `${bgColor} hover:brightness-95`}
+                ${loading || props.disabled ? (ignoreGenericProps ? '' : `${bgColor}/60 cursor-not-allowed`) : (ignoreGenericProps ? '' : `${bgColor} hover:brightness-95`)}
             `}
             {...props}
         >

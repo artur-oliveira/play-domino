@@ -8,6 +8,10 @@ export interface UserUpdate {
     federalDocument: string | null;
 }
 
+export interface User {
+    name: string
+}
+
 export interface CurrentUser extends UserUpdate {
     id: number;
     email: string;

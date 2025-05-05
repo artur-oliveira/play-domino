@@ -42,15 +42,15 @@ class WebSocketService {
         };
 
         this.client.onUnhandledFrame = (frame) => {
-            console.log('[Websocket] <UNK> Erro STOMP:', frame.headers['message'], frame.body);
+            console.error('[Websocket] <UNK> Erro STOMP:', frame.headers['message'], frame.body);
         }
 
         this.client.onUnhandledReceipt = (frame) => {
-            console.log('[WebSocket] <UNK> Erro STOMP:', frame.headers['message']);
+            console.error('[WebSocket] <UNK> Erro STOMP:', frame.headers['message']);
         }
 
         this.client.onUnhandledMessage = (frame) => {
-            console.log('[WebSocket] <UNK> Erro STOMP:', frame.headers['message']);
+            console.error('[WebSocket] <UNK> Erro STOMP:', frame.headers['message']);
         }
     }
 

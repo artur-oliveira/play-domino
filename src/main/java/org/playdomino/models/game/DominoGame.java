@@ -66,6 +66,10 @@ public class DominoGame {
     @Column(name = "pass_count", nullable = false)
     private int passCount;
 
+    @Builder.Default
+    @Column(name = "visible", nullable = false)
+    private boolean visible = true;
+
     @Column(name = "invite_code", unique = true, nullable = false, updatable = false)
     private String inviteCode;
 
@@ -82,10 +86,6 @@ public class DominoGame {
     @Column(name = "ended_at")
     private ZonedDateTime endedAt;
 
-    public boolean containsPlayer(User user) {
-        return getPlayers().stream().anyMatch(it -> Objects.equals(it.getUser().getId(), user.getId()));
-    }
-
     @Transient
     @JsonIgnore
     public boolean notWaitingForPlayers() {
@@ -96,5 +96,11 @@ public class DominoGame {
     @JsonIgnore
     public boolean cannotAcceptNewPlayers() {
         return getPlayers().size() == 4;
+    }
+
+    @JsonIgnore
+    @Transient
+    public boolean isPlayerTurn(DominoGamePlayer player) {
+        return Objects.equals(getPlayers().get(getCurrentPlayer()).getId(), player.getId());
     }
 }

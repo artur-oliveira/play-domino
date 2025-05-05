@@ -19,7 +19,9 @@ public final class DominoGamePlayerDTO {
     private UserDTO user;
     private List<DominoTile> hand;
     private boolean passedLastTurn;
-    private boolean isHost;
+    private boolean currentUser;
+    private boolean currentTurn;
+    private boolean host;
 
     public static DominoGamePlayerDTO of(
             final DominoGamePlayer player, final User loggedUser
@@ -30,7 +32,9 @@ public final class DominoGamePlayerDTO {
                 .user(UserDTO.of(player.getUser()))
                 .hand(Objects.nonNull(loggedUser) && Objects.equals(loggedUser.getId(), player.getUser().getId()) ? player.getHand() : Collections.emptyList())
                 .passedLastTurn(player.isPassedLastTurn())
-                .isHost(player.isHost())
+                .currentUser(Objects.nonNull(loggedUser) && Objects.equals(loggedUser.getId(), player.getUser().getId()))
+                .host(player.isHost())
+                .currentTurn(player.getGame().isPlayerTurn(player))
                 .build();
     }
 }
