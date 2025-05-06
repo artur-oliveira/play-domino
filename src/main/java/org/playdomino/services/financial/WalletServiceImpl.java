@@ -18,6 +18,7 @@ import org.playdomino.services.financial.process.confirmwithdraw.AfterConfirmWit
 import org.playdomino.services.financial.process.confirmwithdraw.BeforeConfirmWithdrawService;
 import org.playdomino.services.financial.process.deposit.BeforeDepositService;
 import org.playdomino.services.financial.process.lock.BeforeLockService;
+import org.playdomino.services.financial.process.unlock.BeforeUnlockService;
 import org.playdomino.services.financial.process.withdraw.BeforeWithdrawService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class WalletServiceImpl implements WalletService {
     private final List<BeforeConfirmWithdrawService> beforeConfirmWithdrawServices;
     private final List<AfterConfirmWithdrawService> afterConfirmWithdrawServices;
     private final List<BeforeLockService> beforeLockServices;
+    private final List<BeforeUnlockService> beforeUnlockServices;
 
     @Override
     @Transactional(readOnly = true)
@@ -146,9 +148,14 @@ public class WalletServiceImpl implements WalletService {
     @Transactional(rollbackFor = Exception.class)
     public void unlockFromGame(final WalletAmount walletAmount) {
         final Wallet wallet = walletAmount.getWallet();
+
+        beforeUnlockServices.forEach(it -> it.process(walletAmount));
+
         wallet.setLockedCents(wallet.getLockedCents() - walletAmount.getAmountCents());
         wallet.setAvailableCents(wallet.getAvailableCents() + walletAmount.getAmountCents());
         walletRepository.save(wallet);
+
+        logTransaction(walletTransaction(WalletTransactionType.GAME_CANCEL, walletAmount));
     }
 
     @Override

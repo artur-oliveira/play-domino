@@ -1,10 +1,16 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {CreateNewGame} from "../models/game.models.ts";
-import {createNewGame, getOngoingGame} from "../services/game.service.ts";
+import {CancelGame, CreateNewGame} from "../models/game.models.ts";
+import {cancelGame, createNewGame, getOngoingGame} from "../services/game.service.ts";
 
 export const useCreateNewGame = () => {
     return useMutation({
         mutationFn: (game: CreateNewGame) => createNewGame(game),
+    });
+};
+
+export const useCancelGame = () => {
+    return useMutation({
+        mutationFn: (cancel: CancelGame) => cancelGame(cancel),
     });
 };
 

@@ -16,6 +16,7 @@ import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
 import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
 import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
+import org.playdomino.services.game.process.cancel.AfterCancelGameService;
 import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
 import org.playdomino.services.game.process.create.BeforeCreateGameService;
 import org.playdomino.services.game.process.vote.AfterGameVoteService;
@@ -36,10 +37,12 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
     private final List<AfterAddPlayerService> afterAddPlayerServices;
-    private final List<BeforeCancelGameService> beforeCancelGameServices;
 
     private final List<BeforeGameVoteService> beforeGameVoteServices;
     private final List<AfterGameVoteService> afterGameVoteServices;
+
+    private final List<BeforeCancelGameService> beforeCancelGameServices;
+    private final List<AfterCancelGameService> afterCancelGameServices;
 
     private final PasswordEncoder passwordEncoder;
     private final MessagesComponent messagesComponent;
@@ -95,6 +98,7 @@ public class DominoGameServiceImpl implements DominoGameService {
         setGameCanceledIfApproved(game, vote);
 
         processAfterGameVote(game, vote);
+        processAfterCancelGame(game, vote);
 
         return game;
     }
@@ -152,6 +156,11 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Transactional(rollbackFor = Exception.class)
     void processAfterGameVote(DominoGame game, DominoGameVote vote) {
         afterGameVoteServices.forEach(service -> service.process(game, vote));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processAfterCancelGame(DominoGame game, DominoGameVote vote) {
+        afterCancelGameServices.forEach(service -> service.process(game));
     }
 
     @Transactional(rollbackFor = Exception.class)

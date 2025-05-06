@@ -7,6 +7,8 @@ public final class WalletExceptionConstants {
 
     public static final String WALLET_DOES_NOT_EXISTS = "wallet.does-not-exists";
     public static final String WALLET_INSUFFICIENT_BALANCE = "wallet.insufficient-balance";
+    public static final String WALLET_ALREADY_LOCKED = "wallet.already-locked";
+    public static final String WALLET_INSUFFICIENT_LOCKED = "wallet.insufficient-locked";
     public static final String PENDING_DEPOSIT_EXISTS = "wallet.deposit.exists-pending";
     public static final String DEPOSIT_MINIMUM_VALUE = "wallet.deposit.minimum-value";
     public static final String DEPOSIT_MAXIMUM_VALUE = "wallet.deposit.maximum-value";

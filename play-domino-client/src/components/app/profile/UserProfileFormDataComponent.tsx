@@ -72,7 +72,7 @@ const UserProfileFormDataComponent: FC<UserProfileFormDataProps> = ({
             federalDocument: user.federalDocument,
         };
         keysToSubmit.forEach((it) => {
-            if (user[it] !== data[it]) {
+            if (user[it] !== data[it] && data[it]) {
                 dataToSubmit[it] = data[it];
             }
         });

@@ -1,4 +1,4 @@
-package org.playdomino.services.game.process.cancel;
+package org.playdomino.services.game.process.cancel.before;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
@@ -9,6 +9,7 @@ import org.playdomino.models.game.VoteType;
 import org.playdomino.models.game.dto.CancelDominoGame;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
 import org.playdomino.services.game.DominoGamePlayerService;
+import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

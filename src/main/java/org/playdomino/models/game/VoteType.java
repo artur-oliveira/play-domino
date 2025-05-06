@@ -12,7 +12,7 @@ public enum VoteType {
 
         @Override
         public String propertyName() {
-            return "domino.game.vote.cancel-game";
+            return "domino.game.vote.cancel";
         }
     };
 

@@ -45,6 +45,17 @@ public enum WalletTransactionType {
             return "transaction.game-entry";
         }
     },
+    GAME_CANCEL {
+        @Override
+        public boolean incoming() {
+            return true;
+        }
+
+        @Override
+        public String propertyName() {
+            return "transaction.game-cancel";
+        }
+    },
     GAME_PRIZE {
         @Override
         public boolean incoming() {

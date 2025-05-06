@@ -1,4 +1,4 @@
-package org.playdomino.services.game.process.cancel;
+package org.playdomino.services.game.process.cancel.before;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -6,6 +6,7 @@ import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.exceptions.game.DominoGameVoteException;
 import org.playdomino.models.game.dto.CancelDominoGame;
+import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +25,7 @@ public class SinglePlayerCancelVoteValidator implements BeforeCancelGameService 
 
     @Override
     @Transactional(readOnly = true)
-    public void process(@NotNull final CancelDominoGame cancelGame) {
+    public void process(final CancelDominoGame cancelGame) {
         if (isSinglePlayerDisapproval(cancelGame)) {
             throwDisapprovalNotAllowed();
         }

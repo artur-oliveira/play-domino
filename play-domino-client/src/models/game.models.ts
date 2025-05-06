@@ -6,7 +6,13 @@ export interface CreateNewGame {
     public: boolean;
 }
 
-export type GameStatus = 'WAITING_FOR_PLAYERS' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELED';
+export interface CancelGame {
+    approve: boolean;
+    gameId: number;
+}
+
+export type VoteType = 'CANCEL_GAME';
+export type GameStatus = 'WAITING_FOR_PLAYERS' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELLED';
 export type DominoTile = (
     'ZERO_ZERO'
     | 'ZERO_ONE'
@@ -58,6 +64,13 @@ export interface DominoGameMove {
     createdAt: string;
 }
 
+export interface DominoGameVote {
+    id: number;
+    player: DominoGamePlayer;
+    voteType: VoteType;
+    approved: boolean;
+}
+
 
 export interface DominoGameResponse {
     id: number;
@@ -68,6 +81,7 @@ export interface DominoGameResponse {
     players: DominoGamePlayer[];
     moves: DominoGameMove[]
     pile: DominoTile[];
+    vote: DominoGameVote[];
     passCount: number;
     inviteCode: string;
     createdAt: string;
