@@ -1,4 +1,4 @@
-import React, {Suspense, lazy} from 'react';
+import React, {Suspense, lazy, SVGAttributes} from 'react';
 // Glob import returns functions: () => Promise<{ default: ReactComponent }>
 const DominoTileSvgModules = import.meta.glob<{
     default: React.FC<React.SVGProps<SVGSVGElement>>;
@@ -14,12 +14,12 @@ for (const path in DominoTileSvgModules) {
     DominoTileSvgs[fileName] = lazy(importer);
 }
 
-interface DominoTileSvgProps {
+interface DominoTileSvgProps extends SVGAttributes<HTMLOrSVGElement>{
     name: string;
     className?: string;
 }
 
-export const DominoTileSvg: React.FC<DominoTileSvgProps> = ({name, className}) => {
+export const DominoTileSvg: React.FC<DominoTileSvgProps> = ({name, className, ...props}) => {
     const Component = DominoTileSvgs[name];
     if (!Component) {
         return <div className="text-red-500">DominoTileSvg not found: {name}</div>;
@@ -27,7 +27,7 @@ export const DominoTileSvg: React.FC<DominoTileSvgProps> = ({name, className}) =
 
     return (
         <Suspense fallback={<div className={`w-12 h-12 bg-gray-200 animate-pulse ${className}`}/>}>
-            <Component className={className}/>
+            <Component className={className} {...props} />
         </Suspense>
     );
 };
