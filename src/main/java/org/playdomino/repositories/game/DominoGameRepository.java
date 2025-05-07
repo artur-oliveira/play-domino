@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface DominoGameRepository extends JpaRepository<DominoGame, Long> {
     @Transactional(readOnly = true)
-    Optional<DominoGame> findDominoGameByHostOrderByIdDesc(User host);
+    Optional<DominoGame> findFirstByHostOrderByIdDesc(User host);
 
     @Query(value = "select exists(select dg.id from DominoGame dg join dg.players dgp where dgp.user = :user AND dg.status in (:status_list))")
     @Transactional(readOnly = true)

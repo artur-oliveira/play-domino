@@ -18,6 +18,7 @@ public final class DominoGameMoveDTO {
     private DominoGamePlayerDTO player;
     private DominoTile tilePlayed;
     private int turn;
+    private MoveDirection moveDirection;
     private boolean passed;
     private boolean closedGame;
     private ZonedDateTime createdAt;
@@ -28,6 +29,7 @@ public final class DominoGameMoveDTO {
                 .id(move.getId())
                 .player(DominoGamePlayerDTO.of(move.getPlayer(), null))
                 .tilePlayed(move.getTilePlayed())
+                .moveDirection(move.getMoveDirection())
                 .turn(move.getTurn())
                 .passed(move.isPassed())
                 .closedGame(move.isClosedGame())

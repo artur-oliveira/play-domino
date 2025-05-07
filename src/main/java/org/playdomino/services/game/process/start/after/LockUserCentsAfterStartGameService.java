@@ -1,16 +1,16 @@
-package org.playdomino.services.game.process.addplayer.after;
+package org.playdomino.services.game.process.start.after;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.models.financial.dto.WalletAmount;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
 import org.playdomino.services.financial.WalletService;
-import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
+import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LockUserCentsAfterAddPlayerService implements AfterAddPlayerService {
+public class LockUserCentsAfterStartGameService implements AfterStartGameService {
     private final WalletService walletService;
 
     @Override

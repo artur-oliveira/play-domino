@@ -1,28 +1,31 @@
 import {DominoTile} from "../../../../models/game.models.ts";
-import {ButtonHTMLAttributes, FC} from "react";
+import {FC} from "react";
+import {DominoTileSvg} from "../DominoTileSvgLoader.tsx";
 import {tiles} from "../../../../utils/dominoTiles.ts";
 
-interface DominoTileProps extends ButtonHTMLAttributes<HTMLDivElement> {
+interface DominoTileProps {
     tile: DominoTile;
-    orientation: "vertical" | "horizontal";
+    orientation: 'vertical' | 'horizontal' | 'flipped';
+    width?: string;
+    height?: string;
 }
 
 const GameDominoTile: FC<DominoTileProps> = ({
                                                  tile,
                                                  orientation = 'horizontal',
-                                                 ...props
+                                                 width,
+                                                 height,
                                              }) => {
 
-    const rotate = orientation === 'vertical' ? 'rotate-90' : '';
+    const rotate = orientation === 'vertical' ? '' : orientation === 'horizontal' ? 'rotate-90' : orientation === 'flipped' ? 'rotate-270' : ''
+
+    const w = width || (orientation === 'vertical' ? 'w-6' : 'w-12');
+    const h = height || 'h-12';
+
+    console.log(tile, w, h)
+
     return (
-        <div
-            className={`w-12 h-16 bg-zinc-500 rounded-lg flex justify-center items-center cursor-grab active:cursor-grabbing`}
-            draggable
-            onDragStart={() => console.log(`Arrastando peça: ${tile}`)}
-            {...props}
-        >
-            <span className={`${rotate} text-4xl`}>{String.fromCodePoint(tiles[tile])}</span>
-        </div>
+        <DominoTileSvg name={tiles[tile]} className={`${w} ${h} ${rotate}`}/>
     );
 }
 

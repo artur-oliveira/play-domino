@@ -36,6 +36,10 @@ public class DominoGameMove {
     @Column(name = "turn", nullable = false)
     private int turn;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "move_direction", nullable = false)
+    private MoveDirection moveDirection;
+
     @Column(name = "passed")
     private boolean passed;
 

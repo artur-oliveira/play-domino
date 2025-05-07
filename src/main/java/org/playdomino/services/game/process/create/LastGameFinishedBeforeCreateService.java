@@ -20,7 +20,7 @@ public class LastGameFinishedBeforeCreateService implements BeforeCreateGameServ
 
     @Transactional(readOnly = true)
     public void process(DominoGame currentGame) {
-        DominoGame lastGame = dominoGameRepository.findDominoGameByHostOrderByIdDesc(currentGame.getHost()).orElse(null);
+        DominoGame lastGame = dominoGameRepository.findFirstByHostOrderByIdDesc(currentGame.getHost()).orElse(null);
         if (Objects.nonNull(lastGame) && lastGame.getStatus().ongoing()) {
             throw new DominoGameAddPlayerException(DominoGameExceptionConstants.LAST_GAME_NOT_FINISHED, messagesComponent.getMessage(DominoGameExceptionConstants.LAST_GAME_NOT_FINISHED));
         }

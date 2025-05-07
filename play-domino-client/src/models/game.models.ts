@@ -13,6 +13,7 @@ export interface CancelGame {
 
 export type VoteType = 'CANCEL_GAME';
 export type GameStatus = 'WAITING_FOR_PLAYERS' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELLED';
+export type MoveDirection = 'RIGHT' | 'LEFT';
 export type DominoTile = (
     'ZERO_ZERO'
     | 'ZERO_ONE'
@@ -59,6 +60,7 @@ export interface DominoGameMove {
     player: DominoGamePlayer;
     tilePlayed: DominoTile;
     turn: number
+    moveDirection: MoveDirection;
     passed: number;
     closedGame: number;
     createdAt: string;

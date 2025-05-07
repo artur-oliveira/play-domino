@@ -14,7 +14,7 @@ import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
-import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
+import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
 import org.playdomino.services.game.process.cancel.AfterCancelGameService;
 import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
@@ -36,7 +36,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
-    private final List<AfterAddPlayerService> afterAddPlayerServices;
+    private final List<AfterStartGameService> afterStartGameServices;
 
     private final List<BeforeGameVoteService> beforeGameVoteServices;
     private final List<AfterGameVoteService> afterGameVoteServices;
@@ -145,7 +145,7 @@ public class DominoGameServiceImpl implements DominoGameService {
 
     @Transactional(rollbackFor = Exception.class)
     void processAfterAddPlayerRequest(AddPlayerDominoGame request) {
-        afterAddPlayerServices.forEach(service -> service.process(request));
+        afterStartGameServices.forEach(service -> service.process(request));
     }
 
     @Transactional(rollbackFor = Exception.class)
