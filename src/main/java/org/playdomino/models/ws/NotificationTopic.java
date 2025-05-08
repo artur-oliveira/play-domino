@@ -17,6 +17,12 @@ public enum NotificationTopic {
         public String prefix() {
             return "/topic/game.";
         }
+    },
+    PUBLIC {
+        @Override
+        public String prefix() {
+            return "/topic/public";
+        }
     };
 
     public abstract String prefix();

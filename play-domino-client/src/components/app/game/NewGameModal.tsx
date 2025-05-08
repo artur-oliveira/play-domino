@@ -5,7 +5,7 @@ import GenericModalComponent from "../../generic/GenericModalComponent.tsx";
 import ButtonComponent from "../../generic/ButtonComponent.tsx";
 import InputComponent from "../../generic/InputComponent.tsx";
 import {useUser} from "../../../providers/user/useUser.tsx";
-import {CreateNewGame} from "../../../models/game.models.ts";
+import {CreateNewGame, GameStartCondition, GameWinCondition} from "../../../models/game.models.ts";
 
 interface NewGameModalProps {
     isOpen: boolean;
@@ -23,6 +23,11 @@ const NewGameModal: FC<NewGameModalProps> = ({
     const [isPublic, setIsPublic] = useState<boolean>(true);
     const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
     const [password, setPassword] = useState<string>("");
+    const [allowBots, setAllowBots] = useState<boolean>(false);
+    const [gameStartCondition, setGameStartCondition] = useState<GameStartCondition>('LAST_WINNER');
+    const [gameWinCondition, setGameWinCondition] = useState<GameWinCondition>('ROUNDS');
+    const [pointsToWin, setPointsToWin] = useState<number>(10);
+    const [roundsToWin, setRoundsToWin] = useState<number>(5);
 
     const {displayCurrency} = useUser();
 
@@ -87,7 +92,12 @@ const NewGameModal: FC<NewGameModalProps> = ({
         onConfirm({
             betAmountCents: getBetAmount(),
             password: password || null,
-            public: isPublic
+            public: isPublic,
+            allowBots: allowBots || false,
+            gameWinCondition: gameWinCondition || "ROUNDS",
+            gameStartCondition: gameStartCondition || "LAST_WINNER",
+            pointsToWin: pointsToWin || 10,
+            roundsToWin: roundsToWin || 5,
         });
     }
 
@@ -171,11 +181,12 @@ const NewGameModal: FC<NewGameModalProps> = ({
                         </ButtonComponent>
 
                         {showAdvanced && (
-                            <div className="mt-4 transition-all">
+                            <div className="mt-4 transition-all space-y-4">
+
                                 <InputComponent
                                     type="text"
                                     name="password"
-                                    className="mt-1 p-3 bg-zinc-700 text-[#fdeccd] rounded-md w-full"
+                                    className="p-3 bg-zinc-700 text-[#fdeccd] rounded-md w-full"
                                     labelName="Senha (opcional)"
                                     value={password}
                                     labelClassName="text-sm text-zinc-300"
@@ -184,6 +195,84 @@ const NewGameModal: FC<NewGameModalProps> = ({
                                     placeholder="Senha para entrar na partida"
                                     onChange={(e) => setPassword(e.target.value)}
                                 />
+
+                                {/* allowBots */}
+                                <div className="flex items-center">
+                                    <input
+                                        id="allowBots"
+                                        type="checkbox"
+                                        checked={allowBots}
+                                        onChange={(e) => setAllowBots(e.target.checked)}
+                                        className="w-4 h-4 text-[#fdeccd] bg-zinc-700 border-zinc-600 rounded focus:ring-[#fdeccd]"
+                                    />
+                                    <label htmlFor="allowBots" className="ml-2 text-sm text-zinc-300">
+                                        Permitir entrada de bots
+                                    </label>
+                                </div>
+
+                                {/* gameStartCondition */}
+                                <div>
+                                    <label className="text-sm text-zinc-300 mb-1 block">Quem começa a partida</label>
+                                    <select
+                                        value={gameStartCondition}
+                                        onChange={(e) => setGameStartCondition(e.target.value as GameStartCondition)}
+                                        className="w-full p-3 bg-zinc-700 text-[#fdeccd] rounded-md"
+                                    >
+                                        <option value="LAST_WINNER">Último vencedor</option>
+                                        <option value="MAX_TILE">Maior peça na mão</option>
+                                    </select>
+                                    <p className="text-xs text-zinc-400 mt-1">Define quem faz a primeira jogada da
+                                        partida.</p>
+                                </div>
+
+                                {/* gameWinCondition */}
+                                <div>
+                                    <label className="text-sm text-zinc-300 mb-1 block">Condição de vitória</label>
+                                    <select
+                                        value={gameWinCondition}
+                                        onChange={(e) => setGameWinCondition(e.target.value as GameWinCondition)}
+                                        className="w-full p-3 bg-zinc-700 text-[#fdeccd] rounded-md"
+                                    >
+                                        <option value="ROUNDS">Vitórias (rounds)</option>
+                                        <option value="POINTS">Pontos</option>
+                                    </select>
+                                    <p className="text-xs text-zinc-400 mt-1">
+                                        Escolha se o jogo termina por número de vitórias ou por pontos acumulados.
+                                    </p>
+                                </div>
+
+                                {/* pointsToWin (visível apenas se POINTS) */}
+                                {gameWinCondition === 'POINTS' && (
+                                    <InputComponent
+                                        type="number"
+                                        name="pointsToWin"
+                                        className="p-3 bg-zinc-700 text-[#fdeccd] rounded-md w-full"
+                                        labelName="Pontos para vencer"
+                                        value={pointsToWin}
+                                        labelClassName="text-sm text-zinc-300"
+                                        min={10}
+                                        maxLength={3}
+                                        placeholder="Ex: 100"
+                                        onChange={(e) => setPointsToWin(parseInt(e.target.value) ?? 10)}
+                                    />
+                                )}
+
+                                {/* roundsToWin (visível apenas se ROUNDS) */}
+                                {gameWinCondition === 'ROUNDS' && (
+                                    <InputComponent
+                                        type="number"
+                                        name="roundsToWin"
+                                        className="p-3 bg-zinc-700 text-[#fdeccd] rounded-md w-full"
+                                        labelName="Vitórias para vencer"
+                                        value={roundsToWin}
+                                        labelClassName="text-sm text-zinc-300"
+                                        min={1}
+                                        maxLength={1}
+                                        placeholder="Ex: 3"
+                                        onChange={(e) => setRoundsToWin(parseInt(e.target.value) ?? 1)}
+                                    />
+                                )}
+
                             </div>
                         )}
                     </div>

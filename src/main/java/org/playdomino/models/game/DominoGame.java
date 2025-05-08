@@ -30,15 +30,6 @@ public class DominoGame {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private GameStatus status;
-
-    @Min(0)
-    @Max(3)
-    @Column(name = "current_player", nullable = false)
-    private int currentPlayer;
-
-    @Column(name = "bet_amount_cents", nullable = false)
-    private Long betAmountCents;
-
     @ManyToOne
     @JoinColumn(name = "host_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_host_user"))
     private User host;
@@ -48,27 +39,55 @@ public class DominoGame {
     private List<DominoGamePlayer> players;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<DominoGameMove> moves;
+    private List<DominoGameRound> rounds;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DominoGameVote> votes;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "domino_game_pile",
-            joinColumns = @JoinColumn(name = "domino_game_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_pile_game_id")),
-            uniqueConstraints = {@UniqueConstraint(name = "unique_domino_game_pile", columnNames = {"domino_game_id", "tile"})}
-    )
-    @Column(name = "tile", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private List<DominoTile> pile;
+    @Min(0)
+    @Max(3)
+    @Column(name = "current_player", nullable = false)
+    private int currentPlayer;
 
-    @Column(name = "pass_count", nullable = false)
-    private int passCount;
+    @Column(name = "bet_amount_cents", nullable = false)
+    private Long betAmountCents;
+
+    // Game Rules
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "game_start_condition", nullable = false, updatable = false)
+    private GameStartCondition gameStartCondition = GameStartCondition.LAST_WINNER;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "game_win_condition", nullable = false, updatable = false)
+    private GameWinCondition gameWinCondition = GameWinCondition.ROUNDS;
+
+    @Builder.Default
+    @Min(10)
+    @Column(name = "points_to_win", nullable = false, updatable = false)
+    private Long pointsToWin = 100L;
+
+    @Builder.Default
+    @Min(1)
+    @Column(name = "rounds_to_win", nullable = false, updatable = false)
+    private Long roundsToWin = 5L;
+
+    @Builder.Default
+    @Column(name = "allow_close_game", nullable = false, updatable = false)
+    private boolean allowCloseGame = false;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "winner_player_id", foreignKey = @ForeignKey(name = "fk_domino_game_winner_player"))
+    private DominoGamePlayer winner;
 
     @Builder.Default
     @Column(name = "visible", nullable = false)
     private boolean visible = true;
+
+    @Builder.Default
+    @Column(name = "allow_bots", nullable = false)
+    private boolean allowBots = false;
 
     @Column(name = "invite_code", unique = true, nullable = false, updatable = false)
     private String inviteCode;

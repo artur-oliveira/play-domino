@@ -2,11 +2,13 @@ package org.playdomino.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.playdomino.models.financial.dto.WalletTransactionDTO;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.CancelDominoGame;
 import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.DominoGameDTO;
 import org.playdomino.models.game.dto.JoinDominoGame;
+import org.playdomino.models.generic.ListReponse;
 import org.playdomino.services.game.DominoGameDTOService;
 import org.playdomino.services.game.DominoGameService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,21 @@ public class DominoGameController {
     private final DominoGameService dominoGameService;
     private final DominoGameDTOService dominoGameDTOService;
 
+    @GetMapping("/public")
+    public ListReponse<DominoGameDTO> getPublicGames(
+            @RequestParam Optional<Integer> page,
+            @RequestParam Optional<Integer> size
+    ) {
+        return new ListReponse<>(
+                dominoGameService.findAllPublicGames(
+                        page.orElse(0),
+                        size.orElse(10)
+                ).stream().map(it -> DominoGameDTO.of(it, it.getPlayers())).toList()
+        );
+    }
+
     @GetMapping("/ongoing")
-    public ResponseEntity<DominoGameDTO> ongoingGame() {
+    public ResponseEntity<DominoGameDTO> getOngoingGame() {
         Optional<DominoGame> dominoGame = dominoGameService.findCurrentDominoGame();
         return dominoGame.map(game -> ResponseEntity.ok(dominoGameDTOService.getDominoGameDTO(game))).orElseGet(() -> ResponseEntity.noContent().build());
     }

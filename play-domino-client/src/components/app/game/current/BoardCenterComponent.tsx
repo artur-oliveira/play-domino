@@ -6,12 +6,15 @@ import GameDominoTile from "./GameDominoTile.tsx";
 type BoardCenterComponentProps = { game: DominoGameResponse };
 
 const BoardCenterComponent: FC<BoardCenterComponentProps> = ({game}) => {
-    const moves: Partial<DominoGameMove>[] = game.moves;
+    const moves: Partial<DominoGameMove>[] = useMemo(() => {
+        return game.moves || [];
+    }, [game.moves]);
 
     // Ordenação respeitando lado jogado
     const orderedTiles = useMemo(() => {
+
         const tiles: Partial<DominoGameMove>[] = [];
-        moves.forEach((move) => {
+        (moves || []).forEach((move) => {
             if (move.moveDirection === 'RIGHT') {
                 tiles.push(move);
             } else if (move.moveDirection === 'LEFT') {
@@ -36,7 +39,10 @@ const BoardCenterComponent: FC<BoardCenterComponentProps> = ({game}) => {
                 <p className="text-sm text-zinc-400">Nenhuma peça jogada ainda.</p>
             ) : (
                 orderedTiles.map((move, index) => (
-                    <GameDominoTile tile={move.tilePlayed!} orientation={getDominoTileMoveOrientation(index)}/>
+                    <GameDominoTile
+                        tile={move.tilePlayed!}
+                        orientation={getDominoTileMoveOrientation(index)}
+                    />
                 ))
             )}
         </div>

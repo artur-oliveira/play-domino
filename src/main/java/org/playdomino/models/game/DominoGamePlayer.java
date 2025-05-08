@@ -1,6 +1,7 @@
 package org.playdomino.models.game;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.playdomino.models.auth.User;
 
@@ -23,6 +24,10 @@ public class DominoGamePlayer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Builder.Default
+    @Column(name = "is_bot", nullable = false)
+    private boolean isBot = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_player_user"))
     private User user;
@@ -31,6 +36,7 @@ public class DominoGamePlayer {
     @JoinColumn(name = "game_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_player_game"))
     private DominoGame game;
 
+    @Size(max = 7)
     @ElementCollection
     @CollectionTable(
             name = "domino_game_player_hand",

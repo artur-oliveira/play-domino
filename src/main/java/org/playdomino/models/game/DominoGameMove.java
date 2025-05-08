@@ -22,8 +22,8 @@ public class DominoGameMove {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "game_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_move_game"))
-    private DominoGame game;
+    @JoinColumn(name = "game_round_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_move_game_round"))
+    private DominoGameRound gameRound;
 
     @ManyToOne
     @JoinColumn(name = "player_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_move_player"))

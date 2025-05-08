@@ -5,7 +5,6 @@ import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.DominoGameVote;
 import org.playdomino.services.game.process.WebSocketNotificationGame;
 import org.playdomino.services.game.process.vote.AfterGameVoteService;
-import org.playdomino.services.game.process.vote.WebSocketNotificationAfterVote;
 import org.playdomino.services.ws.WebSocketNotificationService;
 import org.springframework.stereotype.Service;
 

@@ -6,15 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.playdomino.components.auth.UserUtils;
-import org.playdomino.models.auth.User;
-import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.DominoTile;
-import org.playdomino.models.game.GameStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.playdomino.models.game.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +25,32 @@ public final class CreateDominoGame {
 
     @NotNull
     @Builder.Default
-    public boolean visible = Boolean.TRUE;
+    public Boolean visible = Boolean.TRUE;
+
+    @NotNull
+    @Builder.Default
+    public Boolean allowBots = Boolean.FALSE;
+
+    @NotNull
+    @Builder.Default
+    public GameStartCondition gameStartCondition = GameStartCondition.LAST_WINNER;
+
+    @NotNull
+    @Builder.Default
+    public GameWinCondition gameWinCondition = GameWinCondition.ROUNDS;
+
+    @Min(10)
+    @Builder.Default
+    private Long pointsToWin = 100L;
+
+    @Builder.Default
+    @NotNull
+    @Min(1)
+    private Long roundsToWin = 5L;
+
+    @NotNull
+    @Builder.Default
+    private Boolean allowCloseGame = false;
 
     @Pattern(
             regexp = "^[a-zA-Z0-9]{4,16}$",
@@ -48,8 +68,13 @@ public final class CreateDominoGame {
                 .password(Optional.ofNullable(getPassword()).map(passwordEncoder::encode).orElse(null))
                 .host(UserUtils.currentUser())
                 .status(GameStatus.WAITING_FOR_PLAYERS)
-                .visible(isVisible())
-                .pile(new ArrayList<>(Arrays.asList(DominoTile.values())))
+                .visible(getVisible())
+                .allowBots(getAllowBots())
+                .allowCloseGame(getAllowCloseGame())
+                .gameWinCondition(getGameWinCondition())
+                .gameStartCondition(getGameStartCondition())
+                .pointsToWin(getPointsToWin())
+                .roundsToWin(getRoundsToWin())
                 .players(new ArrayList<>())
                 .inviteCode(UUID.randomUUID().toString())
                 .build();

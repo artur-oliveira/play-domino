@@ -21,10 +21,13 @@ import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
 import org.playdomino.services.game.process.create.BeforeCreateGameService;
 import org.playdomino.services.game.process.vote.AfterGameVoteService;
 import org.playdomino.services.game.process.vote.BeforeGameVoteService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.LinkOption;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +39,6 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
-    private final List<AfterStartGameService> afterStartGameServices;
 
     private final List<BeforeGameVoteService> beforeGameVoteServices;
     private final List<AfterGameVoteService> afterGameVoteServices;
@@ -44,10 +46,29 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final List<BeforeCancelGameService> beforeCancelGameServices;
     private final List<AfterCancelGameService> afterCancelGameServices;
 
+    private final List<AfterStartGameService> afterStartGameServices;
+
     private final PasswordEncoder passwordEncoder;
     private final MessagesComponent messagesComponent;
     private final DominoGamePlayerService dominoGamePlayerService;
     private final DominoGameVoteRepository dominoGameVoteRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DominoGame> findAllPublicGames(Integer page, Integer size) {
+        List<Long> publicGamesIds = dominoGameRepository.findIdPublicUnfinishedGamesByHostNotEqual(
+                UserUtils.currentUser(),
+                GameStatus.unfinisheds(),
+                PageRequest.of(
+                        Math.max(Optional.ofNullable(page).map(it -> it - 1).orElse(0), 0),
+                        Math.min(Optional.ofNullable(size).orElse(10), 50)
+                )
+        );
+        if (publicGamesIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return dominoGameRepository.findAllByIdIn(publicGamesIds);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -61,8 +82,9 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DominoGame create(final CreateDominoGame gameRequest) {
-        DominoGame newGame = createInitialGame(gameRequest);
-        return addHostPlayer(newGame, gameRequest.getPassword());
+        DominoGame game = createInitialGame(gameRequest);
+        game = addHostPlayer(game, gameRequest.getPassword());
+        return game;
     }
 
     @Override
@@ -109,7 +131,6 @@ public class DominoGameServiceImpl implements DominoGameService {
         processBeforeAddPlayerRequest(addPlayerRequest);
         game.getPlayers().add(addPlayerRequest.toDominoPlayer());
         game = dominoGameRepository.saveAndFlush(game);
-        processAfterAddPlayerRequest(addPlayerRequest);
         return game;
     }
 
@@ -141,11 +162,6 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Transactional(rollbackFor = Exception.class)
     void processBeforeAddPlayerRequest(AddPlayerDominoGame request) {
         beforeAddPlayerServices.forEach(service -> service.process(request));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    void processAfterAddPlayerRequest(AddPlayerDominoGame request) {
-        afterStartGameServices.forEach(service -> service.process(request));
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -4,6 +4,11 @@ export interface CreateNewGame {
     betAmountCents: number | null;
     password: string | null;
     public: boolean;
+    allowBots: boolean;
+    gameStartCondition: GameStartCondition;
+    gameWinCondition: GameWinCondition;
+    pointsToWin: number;
+    roundsToWin: number;
 }
 
 export interface CancelGame {
@@ -11,6 +16,8 @@ export interface CancelGame {
     gameId: number;
 }
 
+export type GameStartCondition = 'LAST_WINNER' | 'MAX_TILE';
+export type GameWinCondition = 'ROUNDS' | 'POINTS';
 export type VoteType = 'CANCEL_GAME';
 export type GameStatus = 'WAITING_FOR_PLAYERS' | 'IN_PROGRESS' | 'FINISHED' | 'CANCELLED';
 export type MoveDirection = 'RIGHT' | 'LEFT';
@@ -73,7 +80,7 @@ export interface DominoGameVote {
     approved: boolean;
 }
 
-
+// TODO: Refactor front-end model with backend
 export interface DominoGameResponse {
     id: number;
     status: GameStatus;

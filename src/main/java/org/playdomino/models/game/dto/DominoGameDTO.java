@@ -20,19 +20,11 @@ import java.util.Optional;
 @Builder
 public final class DominoGameDTO {
     private Long id;
-
     private GameStatus status;
-
     private int currentPlayer;
-
     private Long betAmountCents;
-
     private UserDTO host;
-
     private List<DominoGamePlayerDTO> players;
-    private List<DominoGameMoveDTO> moves;
-    private List<DominoGameVoteDTO> votes;
-    private List<DominoTile> pile;
 
     private int passCount;
     private String inviteCode;
@@ -42,9 +34,7 @@ public final class DominoGameDTO {
 
     public static DominoGameDTO of(
             final DominoGame game,
-            final List<DominoGamePlayer> players,
-            final List<DominoGameMove> moves,
-            final List<DominoGameVote> votes
+            final List<DominoGamePlayer> players
     ) {
         final User loggedUser = UserUtils.currentUser();
         return DominoGameDTO
@@ -55,8 +45,6 @@ public final class DominoGameDTO {
                 .betAmountCents(game.getBetAmountCents())
                 .host(UserDTO.of(game.getHost()))
                 .players(Optional.ofNullable(players).orElseGet(ArrayList::new).stream().map(it -> DominoGamePlayerDTO.of(it, loggedUser)).toList())
-                .moves(Optional.ofNullable(moves).orElseGet(ArrayList::new).stream().map(DominoGameMoveDTO::of).toList())
-                .votes(Optional.ofNullable(votes).orElseGet(ArrayList::new).stream().map(DominoGameVoteDTO::of).toList())
                 .inviteCode(game.getInviteCode())
                 .createdAt(game.getCreatedAt())
                 .startedAt(game.getStartedAt())

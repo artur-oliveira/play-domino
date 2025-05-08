@@ -20,9 +20,7 @@ public class WebSocketNotificationGame {
                 .topic(NotificationTopic.GAME)
                 .data(DominoGameDTO.of(
                         dominoGame,
-                        dominoGame.getPlayers(),
-                        dominoGame.getMoves(),
-                        dominoGame.getVotes()
+                        dominoGame.getPlayers()
                 ))
                 .message(messagesComponent.getMessage(messageType))
                 .messageType(messageType)
