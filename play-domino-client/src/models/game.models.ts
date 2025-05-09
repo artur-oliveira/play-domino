@@ -62,6 +62,21 @@ export interface DominoGamePlayer {
     hand: DominoTile[];
 }
 
+export interface DominoGameRound {
+    id: number;
+    moves: DominoGameMove[];
+    pile: DominoTile[];
+    lastLeftTile: DominoTile;
+    lastRightTile: DominoTile;
+    roundPoints: number;
+    winner: DominoGamePlayer | null;
+    passCount: number;
+    isClosed: boolean;
+    createdAt: string; // ZonedDateTime → ISO string
+    startedAt: string | null;
+    endedAt: string | null;
+}
+
 export interface DominoGameMove {
     id: number;
     player: DominoGamePlayer;
@@ -80,21 +95,26 @@ export interface DominoGameVote {
     approved: boolean;
 }
 
-// TODO: Refactor front-end model with backend
 export interface DominoGameResponse {
     id: number;
     status: GameStatus;
-    currentPlayer: number;
-    betAmountCents: number;
     host: User;
     players: DominoGamePlayer[];
-    moves: DominoGameMove[]
-    pile: DominoTile[];
-    vote: DominoGameVote[];
-    passCount: number;
-    inviteCode: string;
-    createdAt: string;
-    startedAt: string;
-    endedAt: string;
-
+    rounds: DominoGameRound[];
+    votes: DominoGameVote[];
+    currentPlayer: number;
+    betAmountCents: number;
+    gameStartCondition: GameStartCondition;
+    gameWinCondition: GameWinCondition;
+    pointsToWin: number;
+    roundsToWin: number;
+    allowCloseGame: boolean;
+    winner: DominoGamePlayer | null;
+    visible: boolean;
+    allowBots: boolean;
+    inviteCode: string | null;
+    password: string;
+    createdAt: string; // ZonedDateTime → ISO string
+    startedAt: string | null;
+    endedAt: string | null;
 }

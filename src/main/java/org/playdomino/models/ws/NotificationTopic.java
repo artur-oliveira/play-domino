@@ -21,7 +21,13 @@ public enum NotificationTopic {
     PUBLIC {
         @Override
         public String prefix() {
-            return "/topic/public";
+            return "/topic/public.games";
+        }
+
+        @Nonnull
+        @Override
+        public String getTopicFor(@Nonnull Long id) {
+            return prefix();
         }
     };
 

@@ -14,6 +14,7 @@ import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
+import org.playdomino.services.game.process.create.AfterCreateGameService;
 import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
 import org.playdomino.services.game.process.cancel.AfterCancelGameService;
@@ -38,6 +39,7 @@ public class DominoGameServiceImpl implements DominoGameService {
 
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
+    private final List<AfterCreateGameService> afterCreateGameServices;
     private final List<BeforeAddPlayerService> beforeAddPlayerServices;
 
     private final List<BeforeGameVoteService> beforeGameVoteServices;
@@ -84,6 +86,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     public DominoGame create(final CreateDominoGame gameRequest) {
         DominoGame game = createInitialGame(gameRequest);
         game = addHostPlayer(game, gameRequest.getPassword());
+        processAfterCreateGame(game);
         return game;
     }
 
@@ -167,6 +170,11 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Transactional(rollbackFor = Exception.class)
     void processBeforeGameVote(DominoGame game) {
         beforeGameVoteServices.forEach(service -> service.process(game));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processAfterCreateGame(DominoGame game) {
+        afterCreateGameServices.forEach(service -> service.process(game));
     }
 
     @Transactional(rollbackFor = Exception.class)

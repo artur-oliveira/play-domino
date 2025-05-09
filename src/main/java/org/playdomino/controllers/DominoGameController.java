@@ -32,7 +32,7 @@ public class DominoGameController {
                 dominoGameService.findAllPublicGames(
                         page.orElse(0),
                         size.orElse(10)
-                ).stream().map(it -> DominoGameDTO.of(it, it.getPlayers())).toList()
+                ).stream().map(dominoGameDTOService::getDominoGameDTO).toList()
         );
     }
 

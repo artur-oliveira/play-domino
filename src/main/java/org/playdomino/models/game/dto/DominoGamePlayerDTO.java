@@ -4,6 +4,7 @@ import lombok.*;
 import org.playdomino.models.auth.User;
 import org.playdomino.models.auth.dto.UserDTO;
 import org.playdomino.models.game.DominoGamePlayer;
+import org.playdomino.models.game.DominoGameRound;
 import org.playdomino.models.game.DominoTile;
 
 import java.util.Collections;
