@@ -81,6 +81,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/v1/health-check").permitAll()
                         // WebSocket endpoint
                         .requestMatchers("/ws").permitAll()
+                        // FAQController
+                        .requestMatchers("/v1/faq").permitAll()
                         // AuthController
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/wallet/*/confirm").hasRole("ADMIN")
