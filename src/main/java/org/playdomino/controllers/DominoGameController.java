@@ -42,6 +42,13 @@ public class DominoGameController {
         return dominoGame.map(game -> ResponseEntity.ok(dominoGameDTOService.getDominoGameDTO(game))).orElseGet(() -> ResponseEntity.noContent().build());
     }
 
+    @GetMapping("/invite/{code}")
+    public ResponseEntity<DominoGameDTO> getInviteGame(
+            @PathVariable String code
+    ) {
+        return ResponseEntity.ok(dominoGameDTOService.getDominoGameDTO(dominoGameService.findDominoGameByInviteCode(code)));
+    }
+
     @PostMapping
     public DominoGameDTO createGame(@Valid @RequestBody CreateDominoGame createDominoGame) {
         return dominoGameDTOService.getDominoGameDTO(dominoGameService.create(createDominoGame));
@@ -54,6 +61,13 @@ public class DominoGameController {
     ) {
         joinGame.setGameId(id);
         return dominoGameDTOService.getDominoGameDTO(dominoGameService.join(joinGame));
+    }
+
+    @PostMapping("/{id}/exit")
+    public void exitGame(
+            @PathVariable Long id
+    ) {
+        dominoGameService.exitGame(id);
     }
 
     @PostMapping("/{id}/cancel")

@@ -13,9 +13,13 @@ public interface DominoGameService {
 
     DominoGame findDominoGameById(Long gameId);
 
+    DominoGame findDominoGameByInviteCode(String inviteCode);
+
     DominoGame create(CreateDominoGame game);
 
     DominoGame join(JoinDominoGame joinDominoGame);
+
+    void exitGame(Long gameId);
 
     DominoGame start(Long gameId);
 

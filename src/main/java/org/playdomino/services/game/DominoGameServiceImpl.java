@@ -6,6 +6,7 @@ import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.game.DominoGameException;
 import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.DominoGame;
+import org.playdomino.models.game.DominoGamePlayer;
 import org.playdomino.models.game.DominoGameVote;
 import org.playdomino.models.game.GameStatus;
 import org.playdomino.models.game.dto.AddPlayerDominoGame;
@@ -15,6 +16,8 @@ import org.playdomino.models.game.dto.JoinDominoGame;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
 import org.playdomino.services.game.process.create.AfterCreateGameService;
+import org.playdomino.services.game.process.exit.BeforeExitGameService;
+import org.playdomino.services.game.process.remove.BeforeRemovePlayerService;
 import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
 import org.playdomino.services.game.process.cancel.AfterCancelGameService;
@@ -40,8 +43,12 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final DominoGameRepository dominoGameRepository;
     private final List<BeforeCreateGameService> beforeCreateGameServiceList;
     private final List<AfterCreateGameService> afterCreateGameServices;
-    private final List<BeforeAddPlayerService> beforeAddPlayerServices;
 
+    private final List<BeforeAddPlayerService> beforeAddPlayerServices;
+    private final List<AfterAddPlayerService> afterAddPlayerServices;
+
+    private final List<BeforeExitGameService> beforeExitGameServices;
+    private final List<BeforeRemovePlayerService> beforeRemovePlayerServices;
     private final List<BeforeGameVoteService> beforeGameVoteServices;
     private final List<AfterGameVoteService> afterGameVoteServices;
 
@@ -98,10 +105,24 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public DominoGame findDominoGameByInviteCode(String inviteCode) {
+        return dominoGameRepository.findByInviteCode(inviteCode)
+                .orElseThrow(this::createGameNotFoundException);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public DominoGame join(final JoinDominoGame joinRequest) {
         DominoGame game = findDominoGameById(joinRequest.getGameId());
         return addPlayerToDominoGame(createAddPlayerRequest(game, joinRequest));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void exitGame(Long gameId) {
+        DominoGame game = findDominoGameById(gameId);
+        beforeExitGameServices.forEach(it -> it.process(game));
     }
 
     @Override
@@ -132,8 +153,10 @@ public class DominoGameServiceImpl implements DominoGameService {
     DominoGame addPlayerToDominoGame(final AddPlayerDominoGame addPlayerRequest) {
         DominoGame game = addPlayerRequest.getGame();
         processBeforeAddPlayerRequest(addPlayerRequest);
-        game.getPlayers().add(addPlayerRequest.toDominoPlayer());
+        DominoGamePlayer player = addPlayerRequest.toDominoPlayer();
+        game.getPlayers().add(player);
         game = dominoGameRepository.saveAndFlush(game);
+        processAfterAddPlayerRequest(game, player);
         return game;
     }
 
@@ -165,6 +188,11 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Transactional(rollbackFor = Exception.class)
     void processBeforeAddPlayerRequest(AddPlayerDominoGame request) {
         beforeAddPlayerServices.forEach(service -> service.process(request));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processAfterAddPlayerRequest(DominoGame game, DominoGamePlayer player) {
+        afterAddPlayerServices.forEach(service -> service.process(game, player));
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -6,7 +6,7 @@ public final class DominoGameExceptionConstants {
     }
 
     public static final String GAME_NOT_FOUND = "dominogame.not-found";
-        public static final String NOT_HAVE_INFO_FOR_BET = "dominogame.not-have-info-for-bet";
+    public static final String NOT_HAVE_INFO_FOR_BET = "dominogame.not-have-info-for-bet";
     public static final String NOT_AVAILABLE_FOR_BET = "dominogame.not-available-for-bet";
     public static final String NOT_A_PLAYER = "dominogame.not-a-player";
 
@@ -16,6 +16,7 @@ public final class DominoGameExceptionConstants {
     public static final String GAME_IS_FULL = "dominogame.add-player.game-is-full";
     public static final String INVALID_PASSWORD = "dominogame.add-player.invalid-password";
 
+    public static final String INVALID_STATUS_FOR_EXIT = "dominogame.exit.invalid-status";
     public static final String ALREADY_VOTED = "dominogame.vote.already-voted";
     public static final String CANNOT_DISAPPROVE = "dominogame.vote.cannot-disapprove";
 }

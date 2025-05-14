@@ -42,7 +42,7 @@ public final class DominoGameDTO {
     private boolean visible;
     private boolean allowBots;
     private String inviteCode;
-    private String password;
+    private boolean requiresPassword;
     private ZonedDateTime createdAt;
     private ZonedDateTime startedAt;
     private ZonedDateTime endedAt;
@@ -74,6 +74,7 @@ public final class DominoGameDTO {
                 .winner(Optional.ofNullable(game.getWinner()).map(it -> DominoGamePlayerDTO.of(it, null)).orElse(null))
                 .createdAt(game.getCreatedAt())
                 .startedAt(game.getStartedAt())
+                .requiresPassword(Objects.nonNull(game.getPassword()))
                 .endedAt(game.getEndedAt())
                 .build();
     }

@@ -36,4 +36,7 @@ public interface DominoGameRepository extends JpaRepository<DominoGame, Long> {
     @Query(value = "select dg from DominoGame dg join fetch dg.players join fetch dg.host where dg.id in (:ids)")
     @Transactional(readOnly = true)
     List<DominoGame> findAllByIdIn(@Param("ids") Collection<Long> ids);
+
+    @Transactional(readOnly = true)
+    Optional<DominoGame> findByInviteCode(String inviteCode);
 }

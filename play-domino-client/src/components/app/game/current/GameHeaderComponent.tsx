@@ -35,7 +35,7 @@ const GameHeaderComponent: FC<GameHeaderComponentProps> = ({game, onCancel, onSh
                 <h2 className="text-xl font-bold mb-2">Informações do Jogo</h2>
                 <p>Status: <span className="font-semibold">{displayGameStatus()}</span></p>
                 <p>Aposta: <span className="font-semibold">{displayGameBetAmount()}</span></p>
-                <p>Criado por: <span className="font-semibold">{game.host.name}</span></p>
+                <p>Dono da sala: <span className="font-semibold">{game.host.name}</span></p>
                 <p>Data de criação: <span className="font-semibold">{displayDateTime(game.createdAt)}</span></p>
             </div>
 

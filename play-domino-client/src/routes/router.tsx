@@ -14,6 +14,7 @@ import UserWalletPage from "../pages/app/UserWalletPage.tsx";
 import UserProvider from "../providers/user/UserProvider.tsx";
 import {WebSocketProvider} from "../providers/websocket/WebSocketProvider.tsx";
 import DominoCurrentGamePage from "../pages/app/DominoCurrentGamePage.tsx";
+import DominoInviteGamePage from "../pages/app/DominoInviteGamePage.tsx";
 
 
 export const router = createBrowserRouter([
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
             {
                 path: "/app/game",
                 element: <DominoCurrentGamePage/>
+            },
+            {
+                path: "/app/game/invite/:code",
+                element: <DominoInviteGamePage/>
             },
             {
                 path: "/app/profile",

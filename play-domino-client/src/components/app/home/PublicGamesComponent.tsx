@@ -5,23 +5,25 @@ import {useWebSocketContext} from "../../../providers/websocket/useWebSocket.tsx
 import GameCardComponent from "./GameCardComponent.tsx";
 import {useNavigate} from "react-router-dom";
 import {ErrorUtils} from "../../../utils/errorUtils.ts";
+import {JoinGame} from "../../../models/game.models.ts";
 
 const PublicGamesComponent = () => {
     const {data: games, isLoading, isError, refetch: refetchGames} = useGetPublicGames();
-
-    const navigate = useNavigate();
     const joinGame = useJoinGame();
-
-    const handleJoin = (gameId: number) => {
-        joinGame.mutate(gameId, {
+    const navigate = useNavigate();
+    const handleJoin = (join: JoinGame) => {
+        joinGame.mutate(join, {
             onSuccess: () => {
                 navigate("/app/game");
             },
             onError: (err) => {
-                ErrorUtils.displayAxiosError(err)
+                ErrorUtils.displayAxiosError(err);
+                if (ErrorUtils.getErrorCode(err) === 'dominogame.add-player.user-already-joined-game') {
+                    navigate("/app/game");
+                }
             }
         });
-    }
+    };
 
     const topic = `/topic/public.games`;
     const {subscribeToTopic, unsubscribeFromTopic, messages} = useWebSocketContext();

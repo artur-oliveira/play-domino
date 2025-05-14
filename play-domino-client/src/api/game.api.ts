@@ -1,6 +1,13 @@
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {CancelGame, CreateNewGame} from "../models/game.models.ts";
-import {cancelGame, createNewGame, getOngoingGame, getPublicGames, joinGame} from "../services/game.service.ts";
+import {CancelGame, CreateNewGame, JoinGame} from "../models/game.models.ts";
+import {
+    cancelGame,
+    createNewGame,
+    getInviteGame,
+    getOngoingGame,
+    getPublicGames,
+    joinGame
+} from "../services/game.service.ts";
 
 export const useCreateNewGame = () => {
     return useMutation({
@@ -10,7 +17,7 @@ export const useCreateNewGame = () => {
 
 export const useJoinGame = () => {
     return useMutation({
-        mutationFn: (gameId: number) => joinGame(gameId),
+        mutationFn: (join: JoinGame) => joinGame(join),
     });
 };
 
@@ -24,6 +31,12 @@ export const useGetOngoingGame = () => {
     return useQuery({
         queryKey: ["game/ongoing"],
         queryFn: getOngoingGame
+    });
+};
+export const useGetInviteGame = (inviteCode: string) => {
+    return useQuery({
+        queryKey: ["game/invite"],
+        queryFn: () => getInviteGame(inviteCode)
     });
 };
 

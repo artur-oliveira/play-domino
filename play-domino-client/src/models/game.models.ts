@@ -11,6 +11,11 @@ export interface CreateNewGame {
     roundsToWin: number;
 }
 
+export interface JoinGame {
+    password: string | null;
+    gameId: number;
+}
+
 export interface CancelGame {
     approve: boolean;
     gameId: number;
@@ -109,6 +114,7 @@ export interface DominoGameResponse {
     pointsToWin: number;
     roundsToWin: number;
     allowCloseGame: boolean;
+    requiresPassword: boolean;
     winner: DominoGamePlayer | null;
     visible: boolean;
     allowBots: boolean;

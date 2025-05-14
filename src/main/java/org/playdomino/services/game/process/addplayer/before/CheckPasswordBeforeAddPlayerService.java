@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Order(0)
@@ -24,7 +25,7 @@ public class CheckPasswordBeforeAddPlayerService implements BeforeAddPlayerServi
     @Transactional(readOnly = true)
     public void process(AddPlayerDominoGame playerToGame) {
         if (Objects.nonNull(playerToGame.getGame().getPassword()) && !passwordEncoder.matches(
-                playerToGame.getPassword(),
+                Optional.ofNullable(playerToGame.getPassword()).orElse(""),
                 playerToGame.getGame().getPassword()
         )) {
             throw new DominoGameAddPlayerException(DominoGameExceptionConstants.INVALID_PASSWORD, messagesComponent.getMessage(DominoGameExceptionConstants.INVALID_PASSWORD));
