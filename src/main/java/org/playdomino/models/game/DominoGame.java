@@ -35,7 +35,7 @@ public class DominoGame {
     private User host;
 
     @Size(max = 4)
-    @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<DominoGamePlayer> players;
 
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -121,5 +121,10 @@ public class DominoGame {
     @Transient
     public boolean isPlayerTurn(DominoGamePlayer player) {
         return Objects.equals(getPlayers().get(getCurrentPlayer()).getId(), player.getId());
+    }
+
+    @Transient
+    public DominoGamePlayer getPlayer(User user) {
+        return getPlayers().stream().filter(it -> Objects.equals(user.getId(), it.getUser().getId())).findFirst().orElse(null);
     }
 }

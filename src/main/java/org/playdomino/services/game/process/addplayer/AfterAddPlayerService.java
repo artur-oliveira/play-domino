@@ -1,7 +1,7 @@
 package org.playdomino.services.game.process.addplayer;
 
-import org.playdomino.models.game.dto.AddPlayerDominoGame;
+import org.playdomino.models.game.DominoGame;
 
 public interface AfterAddPlayerService {
-    void process(AddPlayerDominoGame addPlayerDominoGame);
+    void process(DominoGame dominoGame);
 }

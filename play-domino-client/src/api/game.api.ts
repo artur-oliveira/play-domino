@@ -2,7 +2,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {CancelGame, CreateNewGame, JoinGame} from "../models/game.models.ts";
 import {
     cancelGame,
-    createNewGame,
+    createNewGame, exitGame,
     getInviteGame,
     getOngoingGame,
     getPublicGames,
@@ -24,6 +24,12 @@ export const useJoinGame = () => {
 export const useCancelGame = () => {
     return useMutation({
         mutationFn: (cancel: CancelGame) => cancelGame(cancel),
+    });
+};
+
+export const useExitGame = () => {
+    return useMutation({
+        mutationFn: (gameId: number) => exitGame(gameId),
     });
 };
 

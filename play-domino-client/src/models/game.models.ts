@@ -118,6 +118,7 @@ export interface DominoGameResponse {
     winner: DominoGamePlayer | null;
     visible: boolean;
     allowBots: boolean;
+    currentHost: boolean;
     inviteCode: string | null;
     password: string;
     createdAt: string; // ZonedDateTime → ISO string

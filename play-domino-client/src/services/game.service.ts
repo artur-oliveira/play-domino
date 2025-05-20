@@ -10,6 +10,10 @@ export const cancelGame = async (cancel: CancelGame): Promise<DominoGameResponse
     return api.post(`/v1/domino-game/${cancel.gameId}/cancel`, {approve: cancel.approve}).then((res) => res.data);
 }
 
+export const exitGame = async (gameId: number): Promise<null> => {
+    return api.post(`/v1/domino-game/${gameId}/exit`, {}).then((res) => res.data);
+}
+
 export const joinGame = async (join: JoinGame): Promise<DominoGameResponse> => {
     return api.post(`/v1/domino-game/${join.gameId}/join`, {password: join.password}).then((res) => res.data);
 }

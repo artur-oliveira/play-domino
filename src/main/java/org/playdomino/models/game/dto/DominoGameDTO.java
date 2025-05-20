@@ -28,6 +28,7 @@ public final class DominoGameDTO {
     private Long id;
     private GameStatus status;
     private UserDTO host;
+    private boolean currentHost;
     private List<DominoGamePlayerDTO> players;
     private List<DominoGameRoundDTO> rounds;
     private List<DominoGameVoteDTO> votes;
@@ -61,6 +62,7 @@ public final class DominoGameDTO {
                 .currentPlayer(game.getCurrentPlayer())
                 .betAmountCents(game.getBetAmountCents())
                 .host(UserDTO.of(game.getHost()))
+                .currentHost(Objects.equals(game.getHost().getId(), loggedUser.getId()))
                 .players(Optional.ofNullable(players).orElseGet(ArrayList::new).stream().map(it -> DominoGamePlayerDTO.of(it, loggedUser)).toList())
                 .rounds(Optional.ofNullable(rounds).orElseGet(ArrayList::new).stream().map(DominoGameRoundDTO::of).toList())
                 .votes(Optional.ofNullable(votes).orElseGet(ArrayList::new).stream().map(DominoGameVoteDTO::of).toList())

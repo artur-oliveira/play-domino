@@ -17,6 +17,9 @@ public final class DominoGameExceptionConstants {
     public static final String INVALID_PASSWORD = "dominogame.add-player.invalid-password";
 
     public static final String INVALID_STATUS_FOR_EXIT = "dominogame.exit.invalid-status";
+    public static final String INVALID_STATUS_FOR_REMOVE = "dominogame.remove.invalid-status";
+    public static final String CANNOT_REMOVE = "dominogame.remove.cannot-remove";
+
     public static final String ALREADY_VOTED = "dominogame.vote.already-voted";
     public static final String CANNOT_DISAPPROVE = "dominogame.vote.cannot-disapprove";
 }

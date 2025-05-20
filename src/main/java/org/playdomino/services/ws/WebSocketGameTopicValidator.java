@@ -26,7 +26,7 @@ public class WebSocketGameTopicValidator implements WebSocketTopicValidator {
         if (Objects.isNull(destination) || NotificationTopic.valueOfTopic(destination) != getTopic()) {
             return;
         }
-        checkGameTopic(UserUtils.currentUser().getId(), destination);
+        checkGameTopic(UserUtils.currentUser(accessor).getId(), destination);
     }
 
     void checkGameTopic(Long currentUserId, String destination) {

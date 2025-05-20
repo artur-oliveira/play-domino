@@ -3,17 +3,19 @@ import {FiShare2} from "react-icons/fi";
 import {DominoGameResponse} from "../../../../models/game.models.ts";
 import {FC} from "react";
 import {useUser} from "../../../../providers/user/useUser.tsx";
+import {IoMdExit} from "react-icons/io";
 
 type GameHeaderComponentProps = {
     game: DominoGameResponse;
     onCancel: () => void;
     onShare: () => void;
+    onExit: () => void;
 }
-const GameHeaderComponent: FC<GameHeaderComponentProps> = ({game, onCancel, onShare}) => {
+const GameHeaderComponent: FC<GameHeaderComponentProps> = ({game, onCancel, onShare, onExit}) => {
     const {displayCurrency, displayDateTime} = useUser();
     const displayGameStatus = () => {
         switch (game.status) {
-            case "CANCELED":
+            case "CANCELLED":
                 return 'Cancelado';
             case "WAITING_FOR_PLAYERS":
                 return 'Aguardando jogadores';
@@ -41,20 +43,27 @@ const GameHeaderComponent: FC<GameHeaderComponentProps> = ({game, onCancel, onSh
 
             {/* Lado Direito: Ações */}
             <div className="flex flex-col gap-4">
-                <button
+                {game.currentHost && <button
                     onClick={onCancel}
                     title="Cancelar Partida"
                     className="text-zinc-400 hover:text-red-400 transition-colors"
                 >
                     <AiOutlineCloseCircle size={28}/>
-                </button>
-                <button
+                </button>}
+                {game.currentHost && game.inviteCode && <button
                     onClick={onShare}
                     title="Compartilhar"
                     className="text-zinc-400 hover:text-yellow-400 transition-colors"
                 >
                     <FiShare2 size={26}/>
-                </button>
+                </button>}
+                {!game.currentHost && <button
+                    onClick={onExit}
+                    title="Compartilhar"
+                    className="text-zinc-400 hover:text-red-400 transition-colors"
+                >
+                    <IoMdExit size={26}/>
+                </button>}
             </div>
         </div>
     );

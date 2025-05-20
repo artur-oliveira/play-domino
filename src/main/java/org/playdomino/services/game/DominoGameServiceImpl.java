@@ -9,14 +9,13 @@ import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.DominoGamePlayer;
 import org.playdomino.models.game.DominoGameVote;
 import org.playdomino.models.game.GameStatus;
-import org.playdomino.models.game.dto.AddPlayerDominoGame;
-import org.playdomino.models.game.dto.CancelDominoGame;
-import org.playdomino.models.game.dto.CreateDominoGame;
-import org.playdomino.models.game.dto.JoinDominoGame;
+import org.playdomino.models.game.dto.*;
 import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
+import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
 import org.playdomino.services.game.process.create.AfterCreateGameService;
 import org.playdomino.services.game.process.exit.BeforeExitGameService;
+import org.playdomino.services.game.process.remove.AfterRemovePlayerService;
 import org.playdomino.services.game.process.remove.BeforeRemovePlayerService;
 import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
@@ -30,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.LinkOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +46,10 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final List<AfterAddPlayerService> afterAddPlayerServices;
 
     private final List<BeforeExitGameService> beforeExitGameServices;
+
     private final List<BeforeRemovePlayerService> beforeRemovePlayerServices;
+    private final List<AfterRemovePlayerService> afterRemovePlayerServices;
+
     private final List<BeforeGameVoteService> beforeGameVoteServices;
     private final List<AfterGameVoteService> afterGameVoteServices;
 
@@ -121,8 +122,14 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void exitGame(Long gameId) {
-        DominoGame game = findDominoGameById(gameId);
+        final DominoGame game = findDominoGameById(gameId);
         beforeExitGameServices.forEach(it -> it.process(game));
+        removePlayerFromDominoGame(RemovePlayerDominoGame
+                .builder()
+                .dominoGame(game)
+                .dominoGamePlayer(game.getPlayer(UserUtils.currentUser()))
+                .build()
+        );
     }
 
     @Override
@@ -156,8 +163,17 @@ public class DominoGameServiceImpl implements DominoGameService {
         DominoGamePlayer player = addPlayerRequest.toDominoPlayer();
         game.getPlayers().add(player);
         game = dominoGameRepository.saveAndFlush(game);
-        processAfterAddPlayerRequest(game, player);
+        processAfterAddPlayerRequest(game);
         return game;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void removePlayerFromDominoGame(final RemovePlayerDominoGame removePlayerDominoGame) {
+        DominoGame game = removePlayerDominoGame.getDominoGame();
+        processBeforeRemovePlayer(removePlayerDominoGame);
+        game.getPlayers().remove(removePlayerDominoGame.getDominoGamePlayer());
+         dominoGameRepository.saveAndFlush(game);
+        processAfterRemovePlayer(removePlayerDominoGame);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -191,8 +207,18 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void processAfterAddPlayerRequest(DominoGame game, DominoGamePlayer player) {
-        afterAddPlayerServices.forEach(service -> service.process(game, player));
+    void processAfterAddPlayerRequest(DominoGame game) {
+        afterAddPlayerServices.forEach(service -> service.process(game));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processBeforeRemovePlayer(RemovePlayerDominoGame remove) {
+        beforeRemovePlayerServices.forEach(service -> service.process(remove));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    void processAfterRemovePlayer(RemovePlayerDominoGame remove) {
+        afterRemovePlayerServices.forEach(service -> service.process(remove));
     }
 
     @Transactional(rollbackFor = Exception.class)
