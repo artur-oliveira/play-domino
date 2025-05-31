@@ -257,7 +257,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     private void setGameCanceledIfApproved(DominoGame game, DominoGameVote vote) {
-        if (vote.getVoteType().isApproved(game)) {
+        if (vote.getVoteType().isApproved(game, vote)) {
             game.setStatus(GameStatus.CANCELLED);
         }
     }

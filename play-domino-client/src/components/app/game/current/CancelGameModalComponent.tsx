@@ -5,11 +5,13 @@ import ButtonComponent from "../../../generic/ButtonComponent.tsx";
 type CancelGameModalProps = {
     isOpen: boolean;
     onClose: () => void;
+    label: string;
     onConfirm: (approved: boolean) => void;
 }
 
 const CancelGameModalComponent: FC<CancelGameModalProps> = ({
                                                                 isOpen,
+                                                                label,
                                                                 onClose,
                                                                 onConfirm
                                                             }) => {
@@ -20,7 +22,7 @@ const CancelGameModalComponent: FC<CancelGameModalProps> = ({
             child={
                 <>
                     <h3 className="text-xl font-semibold text-center text-[#fdeccd]">
-                        Aceita o cancelamento deste jogo?
+                        {label}
                     </h3>
                     <div className="flex justify-around mt-4">
                         <ButtonComponent

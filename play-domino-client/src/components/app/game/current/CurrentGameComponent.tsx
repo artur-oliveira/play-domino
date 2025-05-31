@@ -136,6 +136,7 @@ const CurrentGameComponent = () => {
             </div>
             <CancelGameModalComponent isOpen={cancelModal.isOpen}
                                       onClose={cancelModal.closeModal}
+                                      label={game.currentHost ? 'Deseja cancelar o jogo?' : 'Aceita o cancelamento do jogo?'}
                                       onConfirm={handleCancel}/>
             <ExitGameModalComponent isOpen={exitModal.isOpen}
                                     onClose={exitModal.closeModal}

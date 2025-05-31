@@ -2,6 +2,9 @@ package org.playdomino.models.game;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.playdomino.models.auth.User;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "domino_game_vote", uniqueConstraints = {
@@ -32,5 +35,10 @@ public class DominoGameVote {
 
     @Column(name = "approved", nullable = false)
     private boolean approved;
+
+    @Transient
+    public boolean isVoteApproved(User host) {
+        return approved && Objects.equals(getPlayer().getUser(), host);
+    }
 }
 
