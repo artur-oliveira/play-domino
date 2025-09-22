@@ -1,5 +1,7 @@
 package org.playdomino.models.game;
 
+import org.playdomino.services.game.DominoWebSocketMessageTypes;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -22,7 +24,7 @@ public enum VoteType {
 
         @Override
         public String propertyName() {
-            return "domino.game.vote.cancel";
+            return DominoWebSocketMessageTypes.VOTE_CANCEL;
         }
     };
 

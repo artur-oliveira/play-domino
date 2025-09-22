@@ -1,21 +1,16 @@
-package org.playdomino.services.game.process.addplayer.after;
+package org.playdomino.services.game.process.start.after;
 
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.services.game.DominoWebSocketMessageTypes;
 import org.playdomino.services.game.process.WebSocketNotificationGame;
-import org.playdomino.services.game.process.WebSocketNotificationPublicGame;
-import org.playdomino.services.game.process.addplayer.AfterAddPlayerService;
-import org.playdomino.services.game.process.create.AfterCreateGameService;
+import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.playdomino.services.ws.WebSocketNotificationService;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
-public class NotifyWebSocketAfterAddPlayerService extends WebSocketNotificationGame implements AfterAddPlayerService {
-
-    public NotifyWebSocketAfterAddPlayerService(
+public class NotifyWebSocketAfterStartGame extends WebSocketNotificationGame implements AfterStartGameService {
+    public NotifyWebSocketAfterStartGame(
             MessagesComponent messagesComponent,
             WebSocketNotificationService webSocketNotificationService
     ) {
@@ -24,6 +19,6 @@ public class NotifyWebSocketAfterAddPlayerService extends WebSocketNotificationG
 
     @Override
     public void process(DominoGame dominoGame) {
-        sendNotification(DominoWebSocketMessageTypes.USER_JOINED, dominoGame.getId().toString(), dominoGame);
+        sendNotification(DominoWebSocketMessageTypes.GAME_STARTED, dominoGame.getId().toString(), dominoGame);
     }
 }

@@ -78,4 +78,11 @@ public class DominoGameController {
         cancelDominoGame.setGameId(id);
         return dominoGameDTOService.getDominoGameDTO(dominoGameService.cancel(cancelDominoGame));
     }
+
+    @PostMapping("/{id}/start")
+    public DominoGameDTO startGame(
+            @PathVariable Long id
+    ) {
+        return dominoGameDTOService.getDominoGameDTO(dominoGameService.start(id));
+    }
 }

@@ -1,10 +1,12 @@
 package org.playdomino.models.game;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import java.util.Arrays;
+import java.security.SecureRandom;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -42,6 +44,21 @@ public enum DominoTile {
     private final int left;
     @EqualsAndHashCode.Include
     private final int right;
+
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
+    public static List<DominoTile> randomOrder(int playersQuantity) {
+        List<DominoTile> excludeTileList = new ArrayList<>();
+        if (playersQuantity == 3) {
+            excludeTileList.add(ZERO_ZERO);
+        }
+        List<DominoTile> list = Arrays.stream(values()).filter(it -> !excludeTileList.contains(it)).collect(Collectors.toList());
+        for (int i = list.size() - 1; i > 0; i--) {
+            int j = SECURE_RANDOM.nextInt(i + 1);
+            Collections.swap(list, i, j);
+        }
+        return list;
+    }
 
     @Override
     public String toString() {

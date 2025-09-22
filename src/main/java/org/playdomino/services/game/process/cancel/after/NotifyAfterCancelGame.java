@@ -3,6 +3,7 @@ package org.playdomino.services.game.process.cancel.after;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.GameStatus;
+import org.playdomino.services.game.DominoWebSocketMessageTypes;
 import org.playdomino.services.game.process.WebSocketNotificationGame;
 import org.playdomino.services.game.process.cancel.AfterCancelGameService;
 import org.playdomino.services.ws.WebSocketNotificationService;
@@ -15,7 +16,6 @@ import java.util.Objects;
 @Order
 public class NotifyAfterCancelGame extends WebSocketNotificationGame implements AfterCancelGameService {
 
-    private static final String CANCEL_GAME = "domino.game.cancel";
 
     public NotifyAfterCancelGame(
             MessagesComponent messagesComponent,
@@ -29,6 +29,6 @@ public class NotifyAfterCancelGame extends WebSocketNotificationGame implements 
         if (!Objects.equals(dominoGame.getStatus(), GameStatus.CANCELLED)) {
             return;
         }
-        sendNotification(CANCEL_GAME, dominoGame.getId().toString(), dominoGame);
+        sendNotification(DominoWebSocketMessageTypes.CANCEL_GAME, dominoGame.getId().toString(), dominoGame);
     }
 }

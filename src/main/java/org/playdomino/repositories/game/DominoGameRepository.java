@@ -29,7 +29,7 @@ public interface DominoGameRepository extends JpaRepository<DominoGame, Long> {
     @Transactional(readOnly = true)
     Optional<DominoGame> findDominoGameByStatusAndPlayerUser(@Param("status_list") List<GameStatus> statusList, @Param("user") User user);
 
-    @Query(value = "select dg.id from DominoGame dg where dg.status in (:status_list) and dg.visible = true and dg.password is null and dg.host != :user order by dg.id desc")
+    @Query(value = "select dg.id from DominoGame dg where dg.status in (:status_list) and dg.visible = true and dg.host != :user order by dg.id desc")
     @Transactional(readOnly = true)
     List<Long> findIdPublicUnfinishedGamesByHostNotEqual(@Param("user") User user, @Param("status_list") List<GameStatus> statusList, Pageable pageable);
 

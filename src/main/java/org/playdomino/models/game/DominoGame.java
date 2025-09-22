@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,7 +45,7 @@ public class DominoGame {
     @OneToMany(mappedBy = "game", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DominoGameVote> votes;
 
-    @Min(0)
+    @PositiveOrZero
     @Max(3)
     @Column(name = "current_player", nullable = false)
     private int currentPlayer;

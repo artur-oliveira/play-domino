@@ -26,8 +26,6 @@ const FAQ = () => {
         )
     }
 
-    console.log(faqs?.data);
-
     return (
         <section className="py-16 bg-zinc-900 text-[#fdeccd] rounded-xl mt-8  px-4 w-full max-w-7xl mx-auto">
             <div className="max-w-7xl mx-auto px-6 text-center">

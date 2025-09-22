@@ -22,4 +22,6 @@ public final class DominoGameExceptionConstants {
 
     public static final String ALREADY_VOTED = "dominogame.vote.already-voted";
     public static final String CANNOT_DISAPPROVE = "dominogame.vote.cannot-disapprove";
+
+    public static final String PLAYERS_SIZE_FOR_DISTRIBUTE_TILES = "dominogame.tile.distribute-quantity";
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.playdomino.models.auth.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,7 @@ public class DominoGamePlayer {
     @JoinColumn(name = "game_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_player_game"))
     private DominoGame game;
 
-    @Size(max = 7)
+    @Size(max = 9)
     @ElementCollection
     @CollectionTable(
             name = "domino_game_player_hand",
@@ -45,7 +46,8 @@ public class DominoGamePlayer {
     )
     @Column(name = "tile", nullable = false)
     @Enumerated(EnumType.STRING)
-    private List<DominoTile> hand;
+    @Builder.Default
+    private List<DominoTile> hand = new ArrayList<>();
 
     @Column(name = "passed_last_turn", nullable = false)
     private boolean passedLastTurn;

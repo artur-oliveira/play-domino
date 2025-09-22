@@ -25,7 +25,7 @@ public class NotifyWebSocketAfterCreatedService extends WebSocketNotificationPub
 
     @Override
     public void process(DominoGame dominoGame) {
-        if (dominoGame.isVisible() && Objects.isNull(dominoGame.getPassword())) {
+        if (dominoGame.isVisible()) {
             sendNotification(NEW_GAME, dominoGame.getId().toString(), dominoGame);
         }
     }

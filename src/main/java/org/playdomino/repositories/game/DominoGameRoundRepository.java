@@ -19,4 +19,5 @@ public interface DominoGameRoundRepository extends JpaRepository<DominoGameRound
     @Query(value = "select dgr from DominoGameRound dgr left join fetch dgr.moves where dgr.game = :game")
     List<DominoGameRound> findAllByGameOrderById(@Param("game") DominoGame game);
 
+    DominoGameRound game(DominoGame game);
 }

@@ -22,6 +22,7 @@ import org.playdomino.services.game.process.addplayer.BeforeAddPlayerService;
 import org.playdomino.services.game.process.cancel.AfterCancelGameService;
 import org.playdomino.services.game.process.cancel.BeforeCancelGameService;
 import org.playdomino.services.game.process.create.BeforeCreateGameService;
+import org.playdomino.services.game.process.start.BeforeStartGameService;
 import org.playdomino.services.game.process.vote.AfterGameVoteService;
 import org.playdomino.services.game.process.vote.BeforeGameVoteService;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +58,7 @@ public class DominoGameServiceImpl implements DominoGameService {
     private final List<BeforeCancelGameService> beforeCancelGameServices;
     private final List<AfterCancelGameService> afterCancelGameServices;
 
+    private final List<BeforeStartGameService> beforeStartGameServices;
     private final List<AfterStartGameService> afterStartGameServices;
 
     private final PasswordEncoder passwordEncoder;
@@ -135,7 +138,16 @@ public class DominoGameServiceImpl implements DominoGameService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public DominoGame start(Long gameId) {
-        return null;
+        DominoGame game = findDominoGameById(gameId);
+        beforeStartGameServices.forEach(it -> it.process(game));
+        processGameStart(game);
+        afterStartGameServices.forEach(it -> it.process(game));
+        return game;
+    }
+
+    void processGameStart(DominoGame game) {
+        game.setStatus(GameStatus.IN_PROGRESS);
+        game.setStartedAt(ZonedDateTime.now());
     }
 
     @Override
@@ -144,8 +156,8 @@ public class DominoGameServiceImpl implements DominoGameService {
         DominoGame game = findDominoGameById(cancelRequest.getGameId());
         cancelRequest.setGame(game);
 
-        processBeforeGameVote(game);
-        processBeforeCancelGame(cancelRequest);
+        beforeGameVoteServices.forEach(service -> service.process(game));
+        beforeCancelGameServices.forEach(service -> service.process(cancelRequest));
 
         DominoGameVote vote = processGameCancellationVote(game, cancelRequest);
         setGameCanceledIfApproved(game, vote);
@@ -172,7 +184,7 @@ public class DominoGameServiceImpl implements DominoGameService {
         DominoGame game = removePlayerDominoGame.getDominoGame();
         processBeforeRemovePlayer(removePlayerDominoGame);
         game.getPlayers().remove(removePlayerDominoGame.getDominoGamePlayer());
-         dominoGameRepository.saveAndFlush(game);
+        dominoGameRepository.saveAndFlush(game);
         processAfterRemovePlayer(removePlayerDominoGame);
     }
 
@@ -222,11 +234,6 @@ public class DominoGameServiceImpl implements DominoGameService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    void processBeforeGameVote(DominoGame game) {
-        beforeGameVoteServices.forEach(service -> service.process(game));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
     void processAfterCreateGame(DominoGame game) {
         afterCreateGameServices.forEach(service -> service.process(game));
     }
@@ -243,7 +250,6 @@ public class DominoGameServiceImpl implements DominoGameService {
 
     @Transactional(rollbackFor = Exception.class)
     void processBeforeCancelGame(CancelDominoGame cancelRequest) {
-        beforeCancelGameServices.forEach(service -> service.process(cancelRequest));
     }
 
     @Transactional(rollbackFor = Exception.class)
