@@ -1,5 +1,5 @@
 import {FC, useEffect, useState} from "react";
-import {DominoGameResponse, DominoTile} from "../../../../models/game.models.ts";
+import {DominoGameResponse, DominoTile, MoveDirection} from "../../../../models/game.models.ts";
 import GamePlayersAreaComponent from "./GamePlayersAreaComponent.tsx";
 import BoardCenterComponent from "./BoardCenterComponent.tsx";
 import GamePlayerHandComponent from "./GamePlayerHandComponent.tsx";
@@ -20,11 +20,11 @@ const DominoBoardComponent: FC<DominoBoardComponentProps> = ({game}) => {
     setHand(currentPlayer?.hand || []);
   }, [currentPlayer?.hand, game]);
 
-  const handleTileDrop = (tile: DominoTile, index: number) => {
+  const handleTileDrop = (tile: DominoTile, index: number, moveDirection: MoveDirection) => {
     createMove.mutate({
       gameId: game.id,
       tile: tile,
-      moveDirection: 'LEFT'
+      moveDirection: moveDirection,
     }, {
       onSuccess: () => {
         setHand(prev => {

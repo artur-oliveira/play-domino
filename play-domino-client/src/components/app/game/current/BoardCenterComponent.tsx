@@ -1,113 +1,198 @@
+// BoardCenterComponent.tsx
 import React, {FC, useMemo} from "react";
-import {DominoGameMove, DominoGameResponse, DominoTile, MoveDirection} from "../../../../models/game.models.ts";
+import {
+  DominoGameMove,
+  DominoGameResponse,
+  DominoTile,
+  MoveDirection,
+} from "../../../../models/game.models.ts";
 import {isDoubleTile, tileValues} from "../../../../utils/dominoTiles.ts";
 import GameDominoTile from "./GameDominoTile.tsx";
 
+type Orientation = "vertical" | "horizontal" | "horizontalflipped";
+
 type BoardCenterComponentProps = {
   game: DominoGameResponse;
-  onTileDrop?: (tile: DominoTile, index: number) => void;
+  onTileDrop?: (
+    tile: DominoTile,
+    index: number,
+    moveDirection: MoveDirection
+  ) => void;
 };
 
-const BoardCenterComponent: FC<BoardCenterComponentProps> = ({game, onTileDrop}) => {
-  const moves: Partial<DominoGameMove>[] = useMemo(() => {
+const BoardCenterComponent: FC<BoardCenterComponentProps> = ({
+                                                               game,
+                                                               onTileDrop,
+                                                             }) => {
+  // moves em ordem cronológica (do turno 1 em diante)
+  const movesChronological: Partial<DominoGameMove>[] = useMemo(() => {
     const rounds = game.rounds || [];
-    return rounds.length > 0 ? rounds[rounds.length - 1].moves : [];
+    const moves = rounds.length > 0 ? rounds[rounds.length - 1].moves || [] : [];
+    return [...moves].sort((a, b) => (a.turn ?? 0) - (b.turn ?? 0));
   }, [game]);
 
-  const orderedTiles = useMemo(() => {
-    const tiles: Partial<DominoGameMove>[] = [];
-    (moves || []).forEach(move => {
-      if (move.moveDirection === "RIGHT") tiles.push(move);
-      else tiles.unshift(move);
-    });
-    return tiles;
-  }, [moves]);
+  // separa primeira peça, lado esquerdo e lado direito
+  const {middleMove, leftChron, rightChron} = useMemo(() => {
+    if (!movesChronological.length) {
+      return {
+        middleMove: null,
+        leftChron: [] as Partial<DominoGameMove>[],
+        rightChron: [] as Partial<DominoGameMove>[],
+      };
+    }
+    const [first, ...rest] = movesChronological;
+    return {
+      middleMove: first,
+      leftChron: rest.filter((m) => m.moveDirection === "LEFT"),
+      rightChron: rest.filter((m) => m.moveDirection === "RIGHT"),
+    };
+  }, [movesChronological]);
 
-  const {leftValue, rightValue} = useMemo(() => {
-    if (!orderedTiles.length) return {leftValue: null, rightValue: null};
+  // função para simular encaixes de peças de um lado
+  const simulateSide = (
+    moves: Partial<DominoGameMove>[],
+    initialVal: number,
+    side: "LEFT" | "RIGHT"
+  ): { display: Partial<DominoGameMove>[]; orientations: Orientation[] } => {
+    let openVal = initialVal;
+    const oris: Orientation[] = [];
 
-    const firstTile = orderedTiles[0].tilePlayed!;
-    let [left, right] = tileValues(firstTile);
+    moves.forEach((m) => {
+      const tile = m.tilePlayed!;
+      const [a, b] = tileValues(tile);
 
-    orderedTiles.slice(1).forEach(move => {
-      const [a, b] = tileValues(move.tilePlayed!);
+      if (isDoubleTile(tile)) {
+        oris.push("vertical");
+        openVal = a; // ambos iguais
+        return;
+      }
 
-      if (move.moveDirection === "RIGHT") {
-        // conectar lado esquerdo do a/b à ponta direita
-        if (a === right) right = b;
-        else right = a;
+      if (side === "LEFT") {
+        if (b === openVal) {
+          oris.push("horizontalflipped");
+          openVal = a;
+        } else if (a === openVal) {
+          oris.push("horizontal");
+          openVal = b;
+        } else {
+          oris.push("horizontal");
+          openVal = a;
+        }
       } else {
-        // conectar lado direito do a/b à ponta esquerda
-        if (b === left) left = a;
-        else left = b;
+        if (a === openVal) {
+          oris.push("horizontalflipped");
+          openVal = b;
+        } else if (b === openVal) {
+          oris.push("horizontal");
+          openVal = a;
+        } else {
+          oris.push("horizontal");
+          openVal = b;
+        }
       }
     });
 
-    return {leftValue: left, rightValue: right};
-  }, [orderedTiles]);
-
-  const getDominoTileMoveOrientation = (moveIndex: number) => {
-    const move = orderedTiles[moveIndex];
-    const tile = move.tilePlayed!;
-    const [a, b] = tileValues(tile);
-
-    if (isDoubleTile(tile)) return "vertical";
-
-    if (moveIndex === 0) return "horizontal"; // primeira peça
-
-    // decidir se precisa virar
-    if (move.moveDirection === "RIGHT") {
-      // ponta da esquerda do tile deve bater com rightValue anterior
-      return a === rightValue ? "horizontal" : "horizontalflipped";
-    } else {
-      // ponta da direita do tile deve bater com leftValue anterior
-      return b === leftValue ? "horizontal" : "horizontalflipped";
-    }
+    // peças da esquerda são renderizadas do extremo para o centro
+    return side === "LEFT"
+      ? {display: [...moves].reverse(), orientations: [...oris].reverse()}
+      : {display: moves, orientations: oris};
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>, moveDirection: MoveDirection) => {
-    e.preventDefault();
-    console.log(`Movimento na ${moveDirection}`);
+  const {
+    leftDisplay,
+    leftOrientations,
+    middleOrientation,
+    rightDisplay,
+    rightOrientations,
+  } = useMemo(() => {
+    if (!middleMove) {
+      return {
+        leftDisplay: [],
+        leftOrientations: [],
+        middleOrientation: undefined,
+        rightDisplay: [],
+        rightOrientations: [],
+      };
+    }
 
+    const midTile = middleMove.tilePlayed!;
+    const [ma, mb] = tileValues(midTile);
+    const middleOrientation: Orientation = isDoubleTile(midTile)
+      ? "vertical"
+      : "horizontal";
+
+    const leftSim = simulateSide(leftChron, ma, "LEFT");
+    const rightSim = simulateSide(rightChron, mb, "RIGHT");
+
+    return {
+      leftDisplay: leftSim.display,
+      leftOrientations: leftSim.orientations,
+      middleOrientation,
+      rightDisplay: rightSim.display,
+      rightOrientations: rightSim.orientations,
+    };
+  }, [middleMove, leftChron, rightChron]);
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    moveDirection: MoveDirection
+  ) => {
+    e.preventDefault();
     const raw = e.dataTransfer.getData("tile");
     if (!raw) return;
     try {
       const {tile, index} = JSON.parse(raw);
       if (tile && typeof index === "number") {
-        onTileDrop?.(tile, index);
+        onTileDrop?.(tile, index, moveDirection);
       }
     } catch {
-      // ignore parse errors
+      // ignore
     }
   };
 
   return (
-    <div className="bg-zinc-800 border border-zinc-600 rounded-2xl p-4 relative w-full h-80 flex items-center justify-center">
-      {/* Zona esquerda */}
+    <div
+      className="bg-zinc-800 border border-zinc-600 rounded-2xl p-4 relative w-full h-80 flex items-center justify-center">
+      {/* zona esquerda */}
       <div
         className="absolute left-0 top-0 w-1/2 h-full"
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => handleDrop(e, 'LEFT')}
+        onDrop={(e) => handleDrop(e, "LEFT")}
       />
 
-      {/* Zona direita */}
+      {/* zona direita */}
       <div
         className="absolute right-0 top-0 w-1/2 h-full"
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => handleDrop(e, 'RIGHT')}
+        onDrop={(e) => handleDrop(e, "RIGHT")}
       />
 
-      {/* Peças do tabuleiro */}
-      {moves.length === 0 ? (
+      {movesChronological.length === 0 ? (
         <p className="text-sm text-zinc-400">Nenhuma peça jogada ainda.</p>
       ) : (
-        orderedTiles.map((move, index) => (
+        <>
+          {leftDisplay.map((move, i) => (
+            <GameDominoTile
+              key={`L-${move.id}-${i}`}
+              tile={move.tilePlayed!}
+              orientation={leftOrientations[i]}
+            />
+          ))}
+
           <GameDominoTile
-            key={`${move.tilePlayed}`}
-            tile={move.tilePlayed!}
-            orientation={getDominoTileMoveOrientation(index)}
+            key={`M-${middleMove!.id}`}
+            tile={middleMove!.tilePlayed!}
+            orientation={middleOrientation!}
           />
-        ))
+
+          {rightDisplay.map((move, i) => (
+            <GameDominoTile
+              key={`R-${move.id}-${i}`}
+              tile={move.tilePlayed!}
+              orientation={rightOrientations[i]}
+            />
+          ))}
+        </>
       )}
     </div>
   );
