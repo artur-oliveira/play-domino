@@ -1,6 +1,7 @@
 package org.playdomino.exceptions.game;
 
 public final class DominoGameExceptionConstants {
+
     private DominoGameExceptionConstants() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
@@ -24,4 +25,11 @@ public final class DominoGameExceptionConstants {
     public static final String CANNOT_DISAPPROVE = "dominogame.vote.cannot-disapprove";
 
     public static final String PLAYERS_SIZE_FOR_DISTRIBUTE_TILES = "dominogame.tile.distribute-quantity";
+    public static final String NOT_ABLE_TO_FIND_FIRST_GAME_PLAYER = "dominogame.not-able-to-find-first-player";
+
+    public static final String NOT_CURRENT_TURN = "dominogame.move.not-current-turn";
+    public static final String MOVE_INVALID_TILE = "dominogame.move.invalid-tile";
+    public static final String MOVE_INVALID_DIRECTION = "dominogame.move.invalid-direction";
+    public static final String MOVE_WOULD_CLOSE_THE_GAME = "dominogame.move.would-close-the-game";
+
 }

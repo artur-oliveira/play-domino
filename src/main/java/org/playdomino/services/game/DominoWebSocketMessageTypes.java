@@ -10,5 +10,6 @@ public final class DominoWebSocketMessageTypes {
     public static final String USER_LEFT = "domino.game.user-left";
     public static final String VOTE_CANCEL = "domino.game.vote.cancel";
     public static final String GAME_STARTED ="domino.game.started";
+    public static final String GAME_MOVE = "domino.game.move";
 
 }

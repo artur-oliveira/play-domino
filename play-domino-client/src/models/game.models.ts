@@ -21,6 +21,12 @@ export interface CancelGame {
   gameId: number;
 }
 
+export interface CreateMove {
+  gameId: number;
+  tile: DominoTile;
+  moveDirection: MoveDirection;
+}
+
 export type GameStartCondition = 'LAST_WINNER' | 'MAX_TILE';
 export type GameWinCondition = 'ROUNDS' | 'POINTS';
 export type VoteType = 'CANCEL_GAME';

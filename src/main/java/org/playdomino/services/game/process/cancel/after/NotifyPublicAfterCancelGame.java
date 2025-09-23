@@ -18,13 +18,6 @@ public class NotifyPublicAfterCancelGame extends WebSocketNotificationPublicGame
 
     private static final String CANCEL_GAME = "domino.game.cancel";
 
-    public NotifyPublicAfterCancelGame(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
-
     @Override
     public void process(DominoGame dominoGame) {
         if (!Objects.equals(dominoGame.getStatus(), GameStatus.CANCELLED)) {

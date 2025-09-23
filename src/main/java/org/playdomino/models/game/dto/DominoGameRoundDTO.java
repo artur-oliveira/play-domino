@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.playdomino.models.game.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +31,12 @@ public final class DominoGameRoundDTO {
     private ZonedDateTime startedAt;
     private ZonedDateTime endedAt;
 
-    public static DominoGameRoundDTO of(DominoGameRound round) {
+    public static DominoGameRoundDTO of(DominoGameRound round, List<DominoGameMove> moves, List<DominoTile> pile) {
         return DominoGameRoundDTO
                 .builder()
                 .id(round.getId())
-                .moves(round.getMoves().stream().map(DominoGameMoveDTO::of).toList())
-                .pile(round.getPile())
+                .moves(moves.stream().map(DominoGameMoveDTO::of).toList())
+                .pile(pile)
                 .lastLeftTile(round.getLastLeftTile())
                 .lastRightTile(round.getLastRightTile())
                 .roundPoints(round.getRoundPoints())

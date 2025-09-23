@@ -1,6 +1,6 @@
 import {useUser} from "../../../../providers/user/useUser.tsx";
 import {ErrorUtils} from "../../../../utils/errorUtils.ts";
-import {useCancelGame, useExitGame, useGetOngoingGame} from "../../../../api/game.api.ts";
+import {useCancelGame, useExitGame, useGetOngoingGame, useStartGame} from "../../../../api/game.api.ts";
 import GameHeaderComponent from "./GameHeaderComponent.tsx";
 import DominoBoardComponent from "./DominoBoardComponent.tsx";
 import {Skeleton} from "../../../generic/Skeleton.tsx";
@@ -16,6 +16,7 @@ const CurrentGameComponent = () => {
   const {user} = useUser();
   const onGoingGame = useGetOngoingGame();
   const cancelGame = useCancelGame();
+  const startGame = useStartGame();
   const exitGame = useExitGame();
   const cancelModal = useModal();
   const exitModal = useModal();
@@ -83,6 +84,14 @@ const CurrentGameComponent = () => {
       });
   }
 
+  const handleStart = () => {
+    startGame.mutate(game.id, {
+      onError: (err) => {
+        ErrorUtils.displayAxiosError(err);
+      }
+    });
+  }
+
   const handleCancel = (
     approve: boolean,
   ) => {
@@ -125,7 +134,10 @@ const CurrentGameComponent = () => {
       <div
         className="bg-zinc-800/50 backdrop-blur-md rounded-xl shadow px-6 py-4 mx-4 mt-4 max-w-7xl w-full self-center">
         <div className="p-4">
-          <GameHeaderComponent game={game} onCancel={cancelModal.openModal} onShare={handleShare}
+          <GameHeaderComponent game={game}
+                               onCancel={cancelModal.openModal}
+                               onShare={handleShare}
+                               onStart={handleStart}
                                onExit={exitModal.openModal}/>
         </div>
       </div>

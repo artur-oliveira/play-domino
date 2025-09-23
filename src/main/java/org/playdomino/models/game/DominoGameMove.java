@@ -1,10 +1,7 @@
 package org.playdomino.models.game;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
@@ -13,6 +10,7 @@ import java.time.ZonedDateTime;
 @Table(name = "domino_game_move")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class DominoGameMove {

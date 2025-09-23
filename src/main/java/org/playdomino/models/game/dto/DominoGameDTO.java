@@ -51,7 +51,7 @@ public final class DominoGameDTO {
     public static DominoGameDTO of(
             final DominoGame game,
             final List<DominoGamePlayer> players,
-            final List<DominoGameRound> rounds,
+            final List<DominoGameRoundDTO> rounds,
             final List<DominoGameVote> votes
     ) {
         final User loggedUser = UserUtils.currentUser();
@@ -64,7 +64,7 @@ public final class DominoGameDTO {
                 .host(UserDTO.of(game.getHost()))
                 .currentHost(Objects.equals(game.getHost().getId(), loggedUser.getId()))
                 .players(Optional.ofNullable(players).orElseGet(ArrayList::new).stream().map(it -> DominoGamePlayerDTO.of(it, loggedUser)).toList())
-                .rounds(Optional.ofNullable(rounds).orElseGet(ArrayList::new).stream().map(DominoGameRoundDTO::of).toList())
+                .rounds(rounds)
                 .votes(Optional.ofNullable(votes).orElseGet(ArrayList::new).stream().map(DominoGameVoteDTO::of).toList())
                 .inviteCode(Objects.equals(game.getHost().getId(), loggedUser.getId()) ? game.getInviteCode() : null)
                 .gameStartCondition(game.getGameStartCondition())

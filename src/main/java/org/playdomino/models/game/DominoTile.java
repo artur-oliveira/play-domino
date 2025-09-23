@@ -1,6 +1,7 @@
 package org.playdomino.models.game;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,6 +45,12 @@ public enum DominoTile {
     private final int left;
     @EqualsAndHashCode.Include
     private final int right;
+    private final boolean sameValue;
+    private final int sum;
+
+    DominoTile(int left, int right) {
+        this(left, right, left == right, left + right);
+    }
 
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
@@ -63,6 +70,23 @@ public enum DominoTile {
     @Override
     public String toString() {
         return String.format("[%d|%d]", left, right);
+    }
+
+    public boolean accepts(@NotNull DominoTile tile) {
+        return Objects.equals(tile.getLeft(), getLeft()) || Objects.equals(tile.getLeft(), getRight()) || Objects.equals(tile.getRight(), getLeft()) || Objects.equals(tile.getRight(), getRight());
+    }
+
+    public boolean accepts(@NotNull int tileNumber) {
+        return Objects.equals(tileNumber, getLeft()) || Objects.equals(tileNumber, getRight());
+    }
+
+    public int otherFace(int tileNumber) {
+        if (Objects.equals(tileNumber, getLeft())) {
+            return getRight();
+        } else if (Objects.equals(tileNumber, getRight())) {
+            return getLeft();
+        }
+        throw new IllegalArgumentException("Invalid tile number: " + tileNumber);
     }
 }
 

@@ -15,13 +15,6 @@ import java.util.Objects;
 @Service
 public class NotifyWebSocketAfterAddPlayerService extends WebSocketNotificationGame implements AfterAddPlayerService {
 
-    public NotifyWebSocketAfterAddPlayerService(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
-
     @Override
     public void process(DominoGame dominoGame) {
         sendNotification(DominoWebSocketMessageTypes.USER_JOINED, dominoGame.getId().toString(), dominoGame);

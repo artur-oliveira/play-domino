@@ -16,13 +16,6 @@ import java.util.Objects;
 public class NotifyWebSocketAfterCreatedService extends WebSocketNotificationPublicGame implements AfterCreateGameService {
     private static final String NEW_GAME = "domino.game.new";
 
-    public NotifyWebSocketAfterCreatedService(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
-
     @Override
     public void process(DominoGame dominoGame) {
         if (dominoGame.isVisible()) {

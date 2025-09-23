@@ -18,14 +18,6 @@ import java.util.Objects;
 @Order
 public class NotifyAfterRemovePlayerGame extends WebSocketNotificationGame implements AfterRemovePlayerService {
 
-
-    public NotifyAfterRemovePlayerGame(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
-
     @Override
     public void process(RemovePlayerDominoGame removePlayerDominoGame) {
         sendNotification(DominoWebSocketMessageTypes.USER_LEFT, removePlayerDominoGame.getDominoGame().getId().toString(), removePlayerDominoGame.getDominoGame());

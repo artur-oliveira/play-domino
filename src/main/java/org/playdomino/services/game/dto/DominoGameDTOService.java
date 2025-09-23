@@ -1,9 +1,7 @@
-package org.playdomino.services.game;
+package org.playdomino.services.game.dto;
 
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.DominoGameDTO;
-
-import java.util.List;
 
 public interface DominoGameDTOService {
 

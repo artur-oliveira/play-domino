@@ -1,10 +1,9 @@
-package org.playdomino.services.game;
+package org.playdomino.services.game.dto;
 
 import lombok.RequiredArgsConstructor;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.dto.DominoGameDTO;
 import org.playdomino.repositories.game.DominoGamePlayerRepository;
-import org.playdomino.repositories.game.DominoGameRoundRepository;
 import org.playdomino.repositories.game.DominoGameVoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DominoGameDTOServiceImpl implements DominoGameDTOService {
 
     private final DominoGamePlayerRepository dominoGamePlayerRepository;
-    private final DominoGameRoundRepository dominoGameRoundRepository;
+    private final DominoGameRoundDTOService dominoGameRoundDTOService;
     private final DominoGameVoteRepository dominoGameVoteRepository;
 
     @Transactional(readOnly = true)
@@ -22,7 +21,7 @@ public class DominoGameDTOServiceImpl implements DominoGameDTOService {
         return DominoGameDTO.of(
                 game,
                 dominoGamePlayerRepository.findAllByGameOrderById(game),
-                dominoGameRoundRepository.findAllByGameOrderById(game),
+                dominoGameRoundDTOService.getDominoGameRoundDTOs(game),
                 dominoGameVoteRepository.findAllByGameOrderById(game)
         );
     }

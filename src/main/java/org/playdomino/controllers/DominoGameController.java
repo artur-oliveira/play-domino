@@ -2,15 +2,12 @@ package org.playdomino.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.playdomino.models.financial.dto.WalletTransactionDTO;
 import org.playdomino.models.game.DominoGame;
-import org.playdomino.models.game.dto.CancelDominoGame;
-import org.playdomino.models.game.dto.CreateDominoGame;
-import org.playdomino.models.game.dto.DominoGameDTO;
-import org.playdomino.models.game.dto.JoinDominoGame;
+import org.playdomino.models.game.dto.*;
 import org.playdomino.models.generic.ListReponse;
-import org.playdomino.services.game.DominoGameDTOService;
+import org.playdomino.services.game.dto.DominoGameDTOService;
 import org.playdomino.services.game.DominoGameService;
+import org.playdomino.services.game.move.DominoGameMoveService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +18,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DominoGameController {
     private final DominoGameService dominoGameService;
+    private final DominoGameMoveService dominoGameMoveService;
     private final DominoGameDTOService dominoGameDTOService;
 
     @GetMapping("/public")
@@ -84,5 +82,14 @@ public class DominoGameController {
             @PathVariable Long id
     ) {
         return dominoGameDTOService.getDominoGameDTO(dominoGameService.start(id));
+    }
+
+    @PostMapping("/{id}/move")
+    public DominoGameDTO createDominoGameMove(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateGameMove createGameMove
+    ) {
+        createGameMove.setGameId(id);
+        return dominoGameDTOService.getDominoGameDTO(dominoGameMoveService.addMove(createGameMove));
     }
 }

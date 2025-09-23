@@ -8,14 +8,13 @@ import org.playdomino.exceptions.game.DominoGameExceptionConstants;
 import org.playdomino.models.game.DominoGame;
 import org.playdomino.models.game.DominoGameRound;
 import org.playdomino.repositories.game.DominoGamePlayerRepository;
+import org.playdomino.repositories.game.DominoGameRepository;
 import org.playdomino.repositories.game.DominoGameRoundRepository;
 import org.playdomino.services.game.DominoGamePlayerService;
 import org.playdomino.services.game.process.start.AfterStartGameService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @Order(Ordered.HIGHEST_PRECEDENCE + 150)
@@ -45,7 +44,6 @@ public class DistributeTilesForPlayersService implements AfterStartGameService {
                 it.getHand().add(round.getPile().removeFirst());
             });
         }
-
         dominoGamePlayerService.saveAll(dominoGame.getPlayers());
         dominoGameRoundRepository.saveAll(dominoGame.getRounds());
     }

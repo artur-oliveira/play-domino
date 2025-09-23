@@ -10,12 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NotifyWebSocketAfterStartGame extends WebSocketNotificationGame implements AfterStartGameService {
-    public NotifyWebSocketAfterStartGame(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
 
     @Override
     public void process(DominoGame dominoGame) {

@@ -5,7 +5,6 @@ import org.playdomino.models.game.dto.CancelDominoGame;
 import org.playdomino.models.game.dto.CreateDominoGame;
 import org.playdomino.models.game.dto.JoinDominoGame;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

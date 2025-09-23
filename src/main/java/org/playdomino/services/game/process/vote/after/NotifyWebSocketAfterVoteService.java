@@ -10,12 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NotifyWebSocketAfterVoteService extends WebSocketNotificationGame implements AfterGameVoteService {
-    public NotifyWebSocketAfterVoteService(
-            MessagesComponent messagesComponent,
-            WebSocketNotificationService webSocketNotificationService
-    ) {
-        super(messagesComponent, webSocketNotificationService);
-    }
 
     @Override
     public void process(DominoGame dominoGame, DominoGameVote gameVote) {

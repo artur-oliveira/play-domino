@@ -1,6 +1,8 @@
 package org.playdomino.models.game;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -42,9 +44,19 @@ public class DominoGameRound {
     @Enumerated(EnumType.STRING)
     private DominoTile lastLeftTile;
 
+    @Max(6)
+    @Min(0)
+    @Column(name = "next_left_tile_number")
+    private Integer nextLeftTileNumber;
+
     @Column(name = "last_right_tile")
     @Enumerated(EnumType.STRING)
     private DominoTile lastRightTile;
+
+    @Max(6)
+    @Min(0)
+    @Column(name = "next_right_tile_number")
+    private Integer nextRightTileNumber;
 
     @Builder.Default
     @Column(name = "round_points", nullable = false)

@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.playdomino.models.auth.User;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -127,5 +128,39 @@ public class DominoGame {
     @Transient
     public DominoGamePlayer getPlayer(User user) {
         return getPlayers().stream().filter(it -> Objects.equals(user.getId(), it.getUser().getId())).findFirst().orElse(null);
+    }
+
+    @Transient
+    public DominoGameRound getCurrentRound() {
+        return getRounds().getLast();
+    }
+
+    @Transient
+    public boolean wouldCloseTheGame(DominoTile tile, MoveDirection moveDirection) {
+        int nextRightTile;
+        int nextLeftTile;
+        if (moveDirection == MoveDirection.LEFT) {
+            nextLeftTile = Objects.nonNull(getCurrentRound().getNextLeftTileNumber()) ? tile.otherFace(getCurrentRound().getNextLeftTileNumber()) : tile.otherFace(tile.getRight());
+            nextRightTile = Objects.nonNull(getCurrentRound().getNextRightTileNumber()) ? getCurrentRound().getNextRightTileNumber() : tile.otherFace(tile.getLeft());
+        } else {
+            nextLeftTile = getCurrentRound().getNextLeftTileNumber();
+            nextRightTile = tile.otherFace(getCurrentRound().getNextRightTileNumber());
+        }
+        boolean notCapableOfPlayAnyTile = getPlayers().stream().allMatch(it -> {
+            List<DominoTile> hand = new ArrayList<>(it.getHand());
+            hand.remove(tile);
+            return hand.stream().noneMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
+        });
+
+        boolean hasNotAnyTileOnPile = Objects.isNull(getCurrentRound().getPile()) || getCurrentRound().getPile().isEmpty() || getCurrentRound().getPile().stream().noneMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
+        return notCapableOfPlayAnyTile && hasNotAnyTileOnPile;
+    }
+
+    public void nextPlayer() {
+        if (getCurrentPlayer() == getPlayers().size() - 1) {
+            setCurrentPlayer(0);
+        } else {
+            setCurrentPlayer(getCurrentPlayer() + 1);
+        }
     }
 }
