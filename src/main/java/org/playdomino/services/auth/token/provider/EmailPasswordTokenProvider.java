@@ -30,7 +30,6 @@ public class EmailPasswordTokenProvider implements TokenProvider {
      * @return JWT response containing access and refresh tokens
      */
     @Override
-    @Transactional(readOnly = true)
     public JwtResponse authenticateAndGenerateTokens(UserToken userToken) {
         Authentication userAuthentication = authenticationManager.authenticate(userToken.getAuthentication());
         SecurityContextHolder.getContext().setAuthentication(userAuthentication);

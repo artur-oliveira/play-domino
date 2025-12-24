@@ -67,11 +67,6 @@ public enum DominoTile {
         return list;
     }
 
-    @Override
-    public String toString() {
-        return String.format("[%d|%d]", left, right);
-    }
-
     public boolean accepts(@NotNull DominoTile tile) {
         return Objects.equals(tile.getLeft(), getLeft()) || Objects.equals(tile.getLeft(), getRight()) || Objects.equals(tile.getRight(), getLeft()) || Objects.equals(tile.getRight(), getRight());
     }

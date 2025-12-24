@@ -58,6 +58,7 @@ const getValue = (s: string): number => {
 }
 
 export const tileValues = (tile: DominoTile): [number, number] => {
+
   const [a, b] = tile.split("_").map(s => getValue(s));
   return [a, b];
 }

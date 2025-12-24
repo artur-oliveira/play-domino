@@ -1,6 +1,7 @@
 
 package org.playdomino.services.auth.token;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.playdomino.components.messages.MessagesComponent;
 import org.playdomino.exceptions.auth.AuthExceptionConstants;
