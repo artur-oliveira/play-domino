@@ -32,6 +32,7 @@ public class DominoGame {
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private GameStatus status;
+
     @ManyToOne
     @JoinColumn(name = "host_user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_domino_game_host_user"))
     private User host;
@@ -146,14 +147,14 @@ public class DominoGame {
             nextLeftTile = getCurrentRound().getNextLeftTileNumber();
             nextRightTile = tile.otherFace(getCurrentRound().getNextRightTileNumber());
         }
-        boolean notCapableOfPlayAnyTile = getPlayers().stream().allMatch(it -> {
+        boolean isAnyOneCapableOfPlayNextHand = getPlayers().stream().allMatch(it -> {
             List<DominoTile> hand = new ArrayList<>(it.getHand());
             hand.remove(tile);
-            return hand.stream().noneMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
+            return hand.stream().anyMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
         });
 
-        boolean hasNotAnyTileOnPile = Objects.isNull(getCurrentRound().getPile()) || getCurrentRound().getPile().isEmpty() || getCurrentRound().getPile().stream().noneMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
-        return notCapableOfPlayAnyTile && hasNotAnyTileOnPile;
+        boolean isAnyTileOnPile = Objects.nonNull(getCurrentRound().getPile()) && getCurrentRound().getPile().isEmpty() && getCurrentRound().getPile().stream().anyMatch(tl -> tl.accepts(nextLeftTile) || tl.accepts(nextRightTile));
+        return !(isAnyTileOnPile || isAnyOneCapableOfPlayNextHand);
     }
 
     public void nextPlayer() {

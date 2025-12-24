@@ -1,6 +1,7 @@
 package org.playdomino.services.auth.user;
 
 import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 import org.playdomino.models.auth.User;
 import org.playdomino.repositories.auth.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         return loadUser(username);
     }
 }

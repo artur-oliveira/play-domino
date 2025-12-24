@@ -6,10 +6,13 @@ import org.playdomino.exceptions.auth.AuthExceptionConstants;
 import org.playdomino.exceptions.auth.UserException;
 import org.playdomino.models.auth.AuthProvider;
 import org.playdomino.models.auth.User;
+import org.playdomino.models.auth.UserRefresh;
 import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserToken;
+import org.playdomino.repositories.auth.UserRefreshRepository;
 import org.playdomino.repositories.auth.UserRepository;
-import org.playdomino.services.auth.JwtService;
+import org.playdomino.services.auth.token.AccessTokenService;
+import org.playdomino.services.auth.token.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,9 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RefreshTokenProvider implements TokenProvider {
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
     private final MessagesComponent messagesComponent;
+    private final RefreshTokenService refreshTokenService;
+    private final UserRefreshRepository userRefreshRepository;
+    private final AccessTokenService accessTokenService;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,7 +44,7 @@ public class RefreshTokenProvider implements TokenProvider {
     }
 
     private void validateRefreshToken(String refreshToken) {
-        if (!jwtService.isValidRefresh(refreshToken)) {
+        if (!refreshTokenService.isValid(refreshToken)) {
             throw createUserException(
                     AuthExceptionConstants.USER_INVALID_REFRESH_TOKEN
             );
@@ -48,22 +52,21 @@ public class RefreshTokenProvider implements TokenProvider {
     }
 
     private User findUserByRefreshToken(String refreshToken) {
-        return userRepository.findUserByUsername(jwtService.idRefresh(refreshToken))
+        return userRefreshRepository
+                .findByToken(refreshToken)
+                .map(UserRefresh::getUser)
                 .orElseThrow(() -> createUserException(AuthExceptionConstants.USER_DOES_NOT_EXISTS));
     }
 
     private Authentication authenticateUser(User user) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
-        );
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user, user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
 
     private JwtResponse generateTokenResponse(Authentication authentication) {
         return JwtResponse.builder()
-                .accessToken(jwtService.generateAccessToken(authentication))
-                .refreshToken(jwtService.generateRefreshToken(authentication))
+                .accessToken(accessTokenService.issueToken(authentication))
                 .build();
     }
 

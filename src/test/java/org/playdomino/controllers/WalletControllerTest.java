@@ -24,7 +24,7 @@ class WalletControllerTest extends GenericIntegrationTest {
                         .accept(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, generateJwt())
                 ).andDo(print())
-                .andExpect(jsonPath("$.length()").value(4))
+                .andExpect(jsonPath("$.length()").value(15))
                 .andExpect(jsonPath("$.availableCents").value(0))
                 .andExpect(jsonPath("$.lockedCents").value(0))
                 .andExpect(jsonPath("$.pendingWithdrawCents").value(0))

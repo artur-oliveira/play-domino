@@ -1,15 +1,15 @@
 package org.playdomino.configuration.properties;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties("org.playdomino.auth")
-public class AuthProperties {
-    private String secretAccess;
-    private String secretRefresh;
+public class RSAKeyProperties {
+    private String privateKey;
+    private String publicKey;
 }

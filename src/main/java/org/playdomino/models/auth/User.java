@@ -9,7 +9,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jspecify.annotations.NullMarked;
 import org.playdomino.components.utils.RandomUtils;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -86,12 +88,10 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     private Set<Role> roles;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     @Column(name = "last_modified_at", nullable = false)
     private ZonedDateTime lastModifiedAt;
@@ -99,7 +99,7 @@ public class User implements UserDetails {
     @Override
     @Transient
     @JsonIgnore
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public @NullMarked Collection<? extends GrantedAuthority> getAuthorities() {
         return Optional.ofNullable(getRoles()).orElseGet(HashSet::new).stream().map(it -> new SimpleGrantedAuthority(it.name())).toList();
     }
 
@@ -131,6 +131,12 @@ public class User implements UserDetails {
     @JsonIgnore
     public boolean canUpdateFederalDocument() {
         return Objects.isNull(getFederalDocument());
+    }
+
+    @Transient
+    @JsonIgnore
+    public UsernamePasswordAuthenticationToken newAuthenticationToken(String password) {
+        return new UsernamePasswordAuthenticationToken(this, password, getAuthorities());
     }
 }
 

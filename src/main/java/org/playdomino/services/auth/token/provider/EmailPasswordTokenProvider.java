@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.playdomino.models.auth.AuthProvider;
 import org.playdomino.models.auth.dto.JwtResponse;
 import org.playdomino.models.auth.dto.UserToken;
-import org.playdomino.services.auth.JwtService;
+import org.playdomino.services.auth.token.AccessTokenService;
+import org.playdomino.services.auth.token.RefreshTokenService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class EmailPasswordTokenProvider implements TokenProvider {
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final AccessTokenService accessTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * Authenticates the user and generates access and refresh tokens.
@@ -47,9 +49,10 @@ public class EmailPasswordTokenProvider implements TokenProvider {
      * @return JWT response with tokens
      */
     private JwtResponse generateTokenResponse(Authentication authentication) {
-        return JwtResponse.builder()
-                .accessToken(jwtService.generateAccessToken(authentication))
-                .refreshToken(jwtService.generateRefreshToken(authentication))
+        return JwtResponse
+                .builder()
+                .accessToken(accessTokenService.issueToken(authentication))
+                .refreshToken(refreshTokenService.issueToken(authentication))
                 .build();
     }
 }

@@ -41,7 +41,7 @@ public final class CreateGameMove {
     public boolean wouldCloseTheGame(
             DominoGame game
     ) {
-        return game.wouldCloseTheGame(getTile(),  getMoveDirection());
+        return game.wouldCloseTheGame(getTile(), getMoveDirection());
     }
 
 }

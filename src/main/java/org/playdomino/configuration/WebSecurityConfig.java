@@ -18,11 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import java.util.List;
 
@@ -40,19 +38,9 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(
             PasswordEncoder passwordEncoder
     ) {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-
-        authProvider.setUserDetailsService(getUserDetailsService());
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(getUserDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder);
-
         return new ProviderManager(authProvider);
-    }
-
-    @Bean
-    MvcRequestMatcher.Builder mvc(
-            HandlerMappingIntrospector introspector
-    ) {
-        return new MvcRequestMatcher.Builder(introspector);
     }
 
     @Bean
@@ -70,7 +58,7 @@ public class WebSecurityConfig {
             HttpSecurity security,
             AuthTokenFilter authTokenFilter,
             CorsConfigurationSource corsConfigurationSource
-    ) throws Exception {
+    ) {
         security
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(AbstractHttpConfigurer::disable)

@@ -3,10 +3,10 @@ package org.playdomino;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.playdomino.repositories.auth.UserRepository;
-import org.playdomino.services.auth.JwtService;
+import org.playdomino.services.auth.token.AccessTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class GenericIntegrationTest {
 
     @Autowired
-    private JwtService jwtService;
+    private AccessTokenService jwtService;
     @Autowired
     private UserRepository userRepository;
 
@@ -40,14 +40,14 @@ public class GenericIntegrationTest {
     }
 
     protected String generateJwt() {
-        return jwtService.generateAccessToken(new UsernamePasswordAuthenticationToken(
+        return jwtService.issueToken(new UsernamePasswordAuthenticationToken(
                 userRepository.findUserByUsername("testuser").orElseThrow(),
                 null
         ));
     }
 
     protected String generateJwtAdmin() {
-        return jwtService.generateAccessToken(new UsernamePasswordAuthenticationToken(
+        return jwtService.issueToken(new UsernamePasswordAuthenticationToken(
                 userRepository.findUserByUsername("testadmin").orElseThrow(),
                 null
         ));

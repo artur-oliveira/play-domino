@@ -26,7 +26,7 @@ public class UniqueEmailValidation implements CreateUserValidation {
         userRepository.findUserByEmail(user.getEmail())
                 .ifPresent(existingUser -> {
                     String errorMessage = getValidationErrorMessage(messagesComponent);
-                    throw new UserAlreadyExistsException(errorMessage, user.getEmail());
+                    throw new UserAlreadyExistsException(errorMessage, existingUser.getEmail());
                 });
     }
 

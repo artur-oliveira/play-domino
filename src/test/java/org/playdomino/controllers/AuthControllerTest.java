@@ -1,6 +1,6 @@
 package org.playdomino.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class AuthControllerTest extends GenericIntegrationTest {
                 .password("Test123456@")
                 .country(Country.BRAZIL)
                 .email("test@test.com")
-                .federalDocument("99999999999")
+                .federalDocument("02382814349")
                 .firstname("Test")
                 .lastname("Testing")
                 .build());

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.playdomino.models.auth.User;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,8 +18,9 @@ import java.util.Optional;
 public final class UserUtils {
     public static User currentUser() {
         return (User) Optional
-                .ofNullable(SecurityContextHolder.getContext())
+                .of(SecurityContextHolder.getContext())
                 .map(SecurityContext::getAuthentication)
+                .filter(it -> !(it instanceof AnonymousAuthenticationToken))
                 .map(Authentication::getPrincipal).orElse(null);
     }
 

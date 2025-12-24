@@ -30,7 +30,7 @@ public class AuthController {
 
     @PostMapping("/verify/{token}")
     public ResponseEntity<Void> verify(
-            @PathVariable("token") String token
+            @PathVariable String token
     ) {
         userVerificationService.verifyUser(token);
         return ResponseEntity.noContent().build();

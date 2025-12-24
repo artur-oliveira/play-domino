@@ -1,10 +1,9 @@
 package org.playdomino.exceptions;
 
-import com.fasterxml.jackson.core.JacksonException;
 import lombok.extern.slf4j.Slf4j;
 import org.playdomino.models.generic.GenericError;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.mapping.PropertyReferenceException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.core.JacksonException;
 
 import java.util.Objects;
 
@@ -54,6 +54,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<GenericError> handleException(DataIntegrityViolationException ex) {
+        log.error("DataIntegrityViolationException: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(GenericError.builder().error(ex.getClass().getSimpleName()).message("database error. cannot create, update or delete this resource").build(), HttpStatus.BAD_REQUEST);
     }
 
